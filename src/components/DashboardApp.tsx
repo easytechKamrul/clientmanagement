@@ -119,9 +119,18 @@ export default function DashboardApp({ view }: Props) {
             .toLowerCase()
             .includes(query.toLowerCase())),
     );
+    const sortDate = (entry: Entry) => {
+      if (entry.status !== "Complete") return entry.date;
+      let totalReceived = entry.advance;
+      for (const payment of entry.payments) {
+        totalReceived += n(payment.amount);
+        if (entry.deal > 0 && totalReceived >= entry.deal) return payment.date;
+      }
+      return entry.date;
+    };
     const sorters: Record<string, (a: Entry, b: Entry) => number> = {
-      "date-desc": (a, b) => b.date.localeCompare(a.date),
-      "date-asc": (a, b) => a.date.localeCompare(b.date),
+      "date-desc": (a, b) => sortDate(b).localeCompare(sortDate(a)),
+      "date-asc": (a, b) => sortDate(a).localeCompare(sortDate(b)),
       "due-desc": (a, b) => remaining(b) - remaining(a),
       "deal-desc": (a, b) => b.deal - a.deal,
       "name-asc": (a, b) => a.client.localeCompare(b.client),
@@ -1073,6 +1082,19 @@ function Details({
             <dt>Working date</dt>
             <dd>{prettyDate(entry.date)}</dd>
           </div>
+          {entry.payments.length > 0 ? (
+            entry.payments.map((payment, index) => (
+              <div key={`${payment.date}-${index}`}>
+                <dt>Additional payment · {prettyDate(payment.date)}</dt>
+                <dd>{money(payment.amount)}</dd>
+              </div>
+            ))
+          ) : (
+            <div>
+              <dt>Additional payments</dt>
+              <dd>—</dd>
+            </div>
+          )}
           <div>
             <dt>Phone</dt>
             <dd>{entry.phone || "—"}</dd>

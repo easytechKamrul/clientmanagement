@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from './home.module.css';
-
+import { FaEnvelope, FaWhatsapp } from 'react-icons/fa';
 const serviceGroups = [
   {
     number: '01',
@@ -358,18 +358,20 @@ export default function Home() {
           </div>
 
           <div className={styles.footerContact}>
-            <span>GET IN TOUCH</span>
+  <span>GET IN TOUCH</span>
 
-            <a href="mailto:easytechsolutionuk@gmail.com">
-              easytechsolutionuk@gmail.com
-              <b>↗</b>
-            </a>
+  <a href="mailto:easytechsolutionuk@gmail.com" className={styles.contactItem}>
+    <FaEnvelope className={styles.emailIcon} />
+    <span>easytechsolutionuk@gmail.com</span>
+    <b>↗</b>
+  </a>
 
-            <a href="tel:+447514585898">
-              +44 7514 585898
-              <b>↗</b>
-            </a>
-          </div>
+  <a href="https://wa.me/447514585898" target="_blank" rel="noopener noreferrer" className={styles.contactItem}>
+    <FaWhatsapp className={styles.whatsappIcon} />
+    <span>+44 7514 585898</span>
+    <b>↗</b>
+  </a>
+</div>
 
           <div className={styles.footerAddress}>
             <span>OUR LOCATION</span>

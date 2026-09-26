@@ -14,6 +14,9 @@
 .toolbar select { min-width: 150px; }
 @import "tailwindcss";
 
+.badge.badge-cancelled { background: #f6dedd; color: var(--red); }
+.badge.badge-due-later { background: #e3edf4; color: #3c697a; }
+
 .pagination { display: flex; align-items: center; justify-content: space-between; gap: 14px; border-top: 1px solid var(--line); margin-top: 12px; padding-top: 14px; color: var(--muted); font-size: 12px; }
 .pagination > div { display: flex; align-items: center; gap: 10px; }
 .pagination button { border: 1px solid var(--line); border-radius: 7px; background: var(--paper); color: var(--foreground); padding: 7px 10px; font-size: 12px; font-weight: 700; }

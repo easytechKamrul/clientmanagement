@@ -1329,3 +1329,32 @@
     gap: 12px;
   }
 }
+
+.footerContact {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contactItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.3s ease;
+}
+
+.contactItem:hover {
+  color: #007bff;
+}
+
+.emailIcon {
+  color: #007bff;
+  font-size: 18px;
+}
+
+.whatsappIcon {
+  color: #25D366;
+  font-size: 18px;
+}

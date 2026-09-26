@@ -1,0 +1,37 @@
+[
+  {
+    "date": "2026-09-24",
+    "client": "Example Client",
+    "service": "Uber ID Recover",
+    "status": "Progress",
+    "deal": 600,
+    "advance": 200,
+    "payments": [
+      {
+        "date": "2026-09-24",
+        "amount": 200
+      }
+    ],
+    "commission": 50,
+    "reference": "REF-001",
+    "email": "client@example.com",
+    "phone": "+8801700000000",
+    "notes": "Replace this example with the real client notes.",
+    "startedDate": "2026-09-24"
+  },
+  {
+    "date": "2026-09-20",
+    "client": "Another Example",
+    "service": "Facebook ID Recover",
+    "status": "Complete",
+    "deal": 400,
+    "advance": 400,
+    "payments": [],
+    "commission": 25,
+    "reference": "REF-002",
+    "email": "",
+    "phone": "+8801800000000",
+    "notes": "",
+    "startedDate": "2026-09-20"
+  }
+]

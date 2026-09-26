@@ -100,7 +100,7 @@ button { cursor: pointer; }
   .active-deal-stat { grid-area: active-deal; }
   .received-stat { grid-area: received; }
   .remaining-stat { grid-area: remaining; }
-  .add-entry-stat { grid-area: add-entry; }
+  .ledger-stats .add-entry-stat { grid-area: add-entry; }
   .pending-card { grid-area: pending; }
   .ledger-stats article { padding: 12px; }
   .ledger-stats article strong { font-size: 20px; }

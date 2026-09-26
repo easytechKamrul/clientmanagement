@@ -1,0 +1,235 @@
+.shell {
+  min-height: 100vh;
+  background: var(--background);
+}
+
+.block {
+  display: block;
+  border-radius: 5px;
+  background: linear-gradient(100deg, #e7e2d8 20%, #f4f0e9 42%, #e7e2d8 64%);
+  background-size: 220% 100%;
+  animation: shimmer 1.35s ease-in-out infinite;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 8px 24px;
+  border-bottom: 1px solid #ffffff1c;
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  border-radius: 8px;
+  background: #ffffff20;
+}
+
+.brandText {
+  display: grid;
+  gap: 8px;
+}
+
+.brandName {
+  width: 150px;
+  height: 12px;
+  background: #ffffff28;
+}
+
+.brandCaption {
+  width: 112px;
+  height: 8px;
+  background: #ffffff18;
+}
+
+.navigation {
+  display: grid;
+  gap: 10px;
+  padding: 22px 8px;
+}
+
+.navItem {
+  width: 100%;
+  height: 36px;
+  background: #ffffff18;
+}
+
+.sidebarFoot {
+  display: grid;
+  gap: 10px;
+  margin-top: auto;
+  border-top: 1px solid #ffffff1c;
+  padding: 18px 8px 0;
+}
+
+.footLabel {
+  width: 112px;
+  height: 9px;
+  background: #ffffff20;
+}
+
+.footValue {
+  width: 145px;
+  height: 26px;
+  background: #ffffff28;
+}
+
+.footBar {
+  width: 100%;
+  height: 5px;
+  background: #ffffff20;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+.header {
+  min-height: 128px;
+}
+
+.heading {
+  display: grid;
+  gap: 11px;
+  flex: 1;
+}
+
+.eyebrow {
+  width: 170px;
+  height: 9px;
+}
+
+.title {
+  width: min(420px, 70vw);
+  height: 42px;
+}
+
+.subtitle {
+  width: 175px;
+  height: 11px;
+}
+
+.action {
+  width: 120px;
+  height: 40px;
+  border-radius: 8px;
+  background: #d6572b40;
+}
+
+.body {
+  display: grid;
+  gap: 22px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.stat,
+.panel {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+}
+
+.stat {
+  display: grid;
+  gap: 12px;
+  padding: 22px;
+}
+
+.statLabel {
+  width: 56%;
+  height: 10px;
+}
+
+.statValue {
+  width: 44%;
+  height: 28px;
+}
+
+.statCaption {
+  width: 63%;
+  height: 9px;
+}
+
+.panels {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.5fr);
+  gap: 22px;
+}
+
+.panel {
+  display: grid;
+  align-content: start;
+  gap: 18px;
+  padding: 22px;
+}
+
+.panelTitle {
+  width: 42%;
+  height: 16px;
+  margin-bottom: 8px;
+}
+
+.panelRow,
+.tableRow {
+  width: 100%;
+  height: 14px;
+}
+
+.panelRow:nth-child(odd),
+.tableRow:nth-child(odd) {
+  width: 82%;
+}
+
+.tableRow {
+  height: 38px;
+  border-radius: 4px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+@keyframes shimmer {
+  to {
+    background-position-x: -220%;
+  }
+}
+
+@media (max-width: 800px) {
+  .sidebar {
+    display: none;
+  }
+
+  .content {
+    padding: 28px 16px;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .panels {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .block {
+    animation: none;
+  }
+}

@@ -29,7 +29,7 @@ flowchart TD
 | অংশ | দায়িত্ব |
 | --- | --- |
 | `src/app` | Next.js pages এবং `/api/*` Route Handlers |
-| `src/components/DashboardApp.tsx` | Dashboard/ledger-এর client-side workflow |
+| `src/components/DashboardApp.tsx` | Dashboard/ledger workflow এবং SWR দিয়ে browser-side entries cache |
 | `src/lib/firebase-client.ts` | Browser-side Firebase app, Google provider এবং Firebase Auth |
 | `src/lib/firebase-admin.ts` | Server-side Firebase Admin initialization, ID token verification এবং admin email allowlist |
 | `src/lib/api-auth.ts` | Protected API request-এর Bearer token যাচাই |
@@ -53,6 +53,7 @@ Firebase এখানে user/admin identity ও token verification-এর জ�
 - `/api/entries`-এর GET/POST, `/api/entries/[id]`-এর PUT/DELETE, payment এবং import handler-গুলো আগে `requireAdmin()` দিয়ে authorization করে, তারপর database operation-এর আগে `connectDB()` ডাকে।
 - `/api/auth/login` পুরনো user ID/password login route। এটি MongoDB-তে `Admin` খোঁজে, bcrypt দিয়ে password hash মেলায়, তারপর JWT দেয়।
 - `connectDB()` `MONGO_URI` দিয়ে Mongoose connect করে। Connection/promise `globalThis`-এ cache করা, তাই একই server process-এ পরের request-গুলো connection reuse করতে পারে।
+- Entry list API `.lean()` ব্যবহার করে plain object ফেরত দেয়। Dashboard ও ledger একই SWR cache key ভাগ করে; client-side page navigation-এ cached data আগে দেখায় এবং background revalidation চালায়। Create/update/delete/payment-এর পর cache update হয়; import শেষে list cache refresh হয়।
 - Ledger data `Entry` model-এ থাকে। Payment entry-এর nested array; `createdAt` ও `updatedAt` Mongoose timestamps থেকে আসে। Save-এর সময় status স্বয়ংক্রিয়ভাবে `Complete` বা `Due Later` হতে পারে।
 
 MongoDB connection lazy: server চালু হলেই সাধারণত database query শুরু হয় না; যেই API route `connectDB()`-এ পৌঁছায়, তখন connection প্রয়োজন হয়।

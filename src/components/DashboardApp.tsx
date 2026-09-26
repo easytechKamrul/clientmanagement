@@ -2,7 +2,10 @@
 
 import type React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import useSWR, { mutate as mutateCache } from "swr";
+import LedgerLoading from "@/components/LedgerLoading";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { firebaseAuth, allowedAdminEmail } from "@/lib/firebase-client";
 import { api } from "@/lib/client-api";
@@ -19,6 +22,9 @@ import {
 } from "@/lib/money";
 
 type Props = { view: "dashboard" | "ledger" };
+const ENTRIES_CACHE_KEY = "/api/entries";
+const EMPTY_ENTRIES: Entry[] = [];
+const fetchEntries = () => api<Entry[]>("/entries");
 const blank: EntryInput = {
   date: today(),
   client: "",
@@ -60,9 +66,18 @@ function Field({
   );
 }
 export default function DashboardApp({ view }: Props) {
-  const [entries, setEntries] = useState<Entry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [authorized, setAuthorized] = useState(false);
+  const {
+    data: cachedEntries,
+    error,
+    isLoading: loading,
+    mutate: mutateEntries,
+  } = useSWR<Entry[]>(authorized ? ENTRIES_CACHE_KEY : null, fetchEntries, {
+    dedupingInterval: 30_000,
+    revalidateOnFocus: false,
+    keepPreviousData: true,
+  });
+  const entries = cachedEntries ?? EMPTY_ENTRIES;
   const [filter, setFilterState] = useState("all");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("date-desc");
@@ -77,24 +92,11 @@ export default function DashboardApp({ view }: Props) {
   };
   const [form, setForm] = useState<EntryInput>(blank);
 
-  const refresh = async () => {
-    setLoading(true);
-    try {
-      setEntries(await api<Entry[]>("/entries"));
-      setError("");
-    } catch (value) {
-      setError(
-        value instanceof Error ? value.message : "Could not load entries",
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
       if (!user || !allowedAdminEmail(user.email))
         window.location.replace("/login");
-      else void refresh();
+      else setAuthorized(true);
     });
     return unsubscribe;
   }, []);
@@ -167,18 +169,20 @@ export default function DashboardApp({ view }: Props) {
           method: "POST",
           body: JSON.stringify(data),
         });
-    setEntries((current) =>
+    await mutateEntries((current = []) =>
       selected
         ? current.map((entry) => (entry._id === result._id ? result : entry))
         : [result, ...current],
+      { revalidate: false },
     );
     setModal(null);
   };
   const remove = async () => {
     if (!selected || !confirm("Delete this entry?")) return;
     await api(`/entries/${selected._id}`, { method: "DELETE" });
-    setEntries((current) =>
-      current.filter((entry) => entry._id !== selected._id),
+    await mutateEntries(
+      (current = []) => current.filter((entry) => entry._id !== selected._id),
+      { revalidate: false },
     );
     setModal(null);
   };
@@ -187,8 +191,10 @@ export default function DashboardApp({ view }: Props) {
       method: "PUT",
       body: JSON.stringify({ status: "Progress" }),
     });
-    setEntries((current) =>
-      current.map((item) => (item._id === result._id ? result : item)),
+    await mutateEntries(
+      (current = []) =>
+        current.map((item) => (item._id === result._id ? result : item)),
+      { revalidate: false },
     );
   };
   const pay = async (amount: number, date: string) => {
@@ -197,11 +203,15 @@ export default function DashboardApp({ view }: Props) {
       method: "POST",
       body: JSON.stringify({ amount, date }),
     });
-    setEntries((current) =>
-      current.map((entry) => (entry._id === result._id ? result : entry)),
+    await mutateEntries(
+      (current = []) =>
+        current.map((entry) => (entry._id === result._id ? result : entry)),
+      { revalidate: false },
     );
     setModal(null);
   };
+
+  if (!authorized || loading) return <LedgerLoading view={view} />;
 
   return (
     <div className="app-shell">
@@ -214,12 +224,12 @@ export default function DashboardApp({ view }: Props) {
           </div>
         </div>
         <nav>
-          <a className={view === "dashboard" ? "active" : ""} href="/dashboard">
+          <Link className={view === "dashboard" ? "active" : ""} href="/dashboard">
             Dashboard
-          </a>
-          <a className={view === "ledger" ? "active" : ""} href="/ledger">
+          </Link>
+          <Link className={view === "ledger" ? "active" : ""} href="/ledger">
             All entries
-          </a>
+          </Link>
         </nav>
         {view === "ledger" && <><p className="nav-label">Filter by status</p>
           {["all", ...STATUSES].map((status) => (
@@ -274,7 +284,11 @@ export default function DashboardApp({ view }: Props) {
             + Add entry
           </button>
         </header>
-        {error && <div className="error banner">{error}</div>}
+        {error && (
+          <div className="error banner">
+            {error instanceof Error ? error.message : "Could not load entries"}
+          </div>
+        )}
         {view === "dashboard" ? (
           <Overview
             entries={entries}
@@ -350,10 +364,13 @@ function Overview({
     window.addEventListener("dashboard-filter", handleFilter);
     return () => window.removeEventListener("dashboard-filter", handleFilter);
   }, []);
-  if (statusFilter !== "all") entries = entries.filter((entry) => entry.status === statusFilter);
+  const filteredEntries =
+    statusFilter === "all"
+      ? entries
+      : entries.filter((entry) => entry.status === statusFilter);
   const monthKeys = [
     ...new Set(
-      entries
+      filteredEntries
         .flatMap((entry) => [
           entry.date,
           ...entry.payments.map((payment) => payment.date),
@@ -366,8 +383,8 @@ function Overview({
     .reverse();
   const scoped =
     month === "all"
-      ? entries
-      : entries.filter((entry) => monthKey(entry.date) === month);
+      ? filteredEntries
+      : filteredEntries.filter((entry) => monthKey(entry.date) === month);
   const active = scoped.filter(
     (entry) => !["Pending", "Cancelled"].includes(entry.status),
   );
@@ -379,7 +396,7 @@ function Overview({
     (sum, entry) => sum + n(entry.commission),
     0,
   );
-  const receivedInMonth = entries
+  const receivedInMonth = filteredEntries
     .filter((entry) => !["Pending", "Cancelled"].includes(entry.status))
     .reduce(
       (sum, entry) =>
@@ -405,7 +422,7 @@ function Overview({
     .slice(0, 6);
   const byMonth = monthKeys
     .map((key) => {
-      const monthEntries = entries.filter(
+      const monthEntries = filteredEntries.filter(
         (entry) =>
           monthKey(entry.date) === key &&
           !["Pending", "Cancelled"].includes(entry.status),
@@ -414,7 +431,7 @@ function Overview({
       const done = monthEntries.filter(
         (entry) => entry.status === "Complete",
       ).length;
-      const collected = entries.reduce(
+      const collected = filteredEntries.reduce(
         (sum, entry) =>
           sum +
           (monthKey(entry.date) === key ? n(entry.advance) : 0) +
@@ -640,7 +657,9 @@ function Ledger({
         body: JSON.stringify(JSON.parse(await file.text())),
       });
       alert(`${imported.imported} entries imported successfully.`);
-      window.location.reload();
+      await mutateCache(ENTRIES_CACHE_KEY, fetchEntries(), {
+        revalidate: false,
+      });
     } catch (error) {
       alert(
         error instanceof Error ? error.message : "Could not import entries",

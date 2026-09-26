@@ -9,8 +9,6 @@
 .ledger-stats article.green strong { color: var(--green); }.ledger-stats article.red strong { color: var(--red); }.ledger-stats article.pending-card strong { color: #a36a16; }
  .toolbar select, .print-button { border: 1px solid var(--line); background: var(--paper); border-radius: 8px; padding: 11px 12px; color: var(--foreground); font-size: 12px; font-weight: 700; }
 .print-button { white-space: nowrap; cursor: pointer; }
-.import-button { display: inline-block; position: relative; overflow: hidden; }
-.import-button input { position: absolute; inset: 0; width: 100%; height: 100%; cursor: pointer; opacity: 0; }
 .toolbar select { min-width: 150px; }
 @import "tailwindcss";
 
@@ -48,6 +46,73 @@ button { cursor: pointer; }
 .sidebar { position: fixed; inset: 0 auto 0 0; z-index: 5; width: 270px; height: 100vh; overflow-y: auto; background: var(--ink); color: #f6f4ed; padding: 28px 18px 18px; display: flex; flex-direction: column; gap: 10px; }
 .content { margin-left: 270px; }
 @media (max-width: 800px) { .content { margin-left: 0; } }
+.sidebar-scrim, .mobile-topbar { display: none; }
+.mobile-sidebar-close { display: none; }
+.mobile-entry-list { display: none; }
+.toolbar-filters { display: contents; }
+.add-entry-stat { display: none; }
+@media (max-width: 800px) {
+  .sidebar.sidebar-open { display: flex; position: fixed; inset: 0 auto 0 0; z-index: 20; width: min(290px, 86vw); box-shadow: 12px 0 32px #18221f40; }
+  .sidebar-scrim { display: block; position: fixed; inset: 0; z-index: 19; background: #18221fcc; border: 0; }
+  .mobile-sidebar-close { display: grid; place-items: center; width: 38px; height: 38px; margin-left: auto; border: 1px solid #ffffff30; border-radius: 8px; background: transparent; color: white; }
+  .mobile-topbar { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; }
+  .mobile-topbar img { object-fit: contain; border-radius: 6px; background: white; }
+  .mobile-topbar strong { font-size: 12px; }
+  .menu-toggle { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); color: var(--foreground); }
+  .content .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .content .summary-grid { grid-template-columns: minmax(0, 1fr); }
+  .ledger-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .responsive-add-header { display: none; }
+  .add-entry-stat { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 112px; padding: 14px; border: 0; border-radius: 8px; background: var(--brand); color: white; font-size: 14px; font-weight: 800; }
+  .add-entry-stat span { font-size: 26px; line-height: 1; }
+  .content .toolbar { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .toolbar-filters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .toolbar-filters select, .toolbar-filters .print-button { width: 100%; min-width: 0; }
+  .content .table-wrap { overflow: visible; padding: 12px; }
+  .table-wrap > table { display: none; }
+  .mobile-entry-list { display: grid; gap: 10px; }
+  .mobile-entry { display: grid; gap: 12px; padding: 14px; background: var(--background); border: 1px solid var(--line); border-radius: 8px; }
+  .mobile-entry-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .mobile-entry-heading h3 { margin: 0; overflow-wrap: anywhere; font-size: 15px; }
+  .mobile-entry-values { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0; }
+  .mobile-entry-values dt { color: var(--muted); font-size: 11px; }
+  .mobile-entry-values dd { margin: 4px 0 0; font-size: 14px; font-weight: 800; }
+  .tablet-entry-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .tablet-entry-meta div { display: grid; gap: 4px; min-width: 0; }
+  .tablet-entry-meta small { color: var(--muted); font-size: 10px; }
+  .tablet-entry-meta span { overflow-wrap: anywhere; font-size: 12px; }
+  .tablet-entry-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tablet-entry-actions button { border: 1px solid var(--line); border-radius: 7px; padding: 8px 10px; background: var(--paper); color: var(--foreground); font-size: 12px; font-weight: 750; }
+  .tablet-entry-actions button.success { border: 0; background: var(--green); color: white; }
+  .mobile-entry-details { display: none; }
+}
+@media (max-width: 520px) {
+  .ledger-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .ledger-stats { grid-template-areas: "entries-count active-deal" "received pending" "remaining add-entry"; }
+  .entries-count { grid-area: entries-count; }
+  .active-deal-stat { grid-area: active-deal; }
+  .received-stat { grid-area: received; }
+  .remaining-stat { grid-area: remaining; }
+  .add-entry-stat { grid-area: add-entry; }
+  .pending-card { grid-area: pending; }
+  .ledger-stats article { padding: 12px; }
+  .ledger-stats article strong { font-size: 20px; }
+  .content h1 { font-size: 32px; }
+  .month-by-month, .phone-hide { display: none !important; }
+  .content .table-wrap { overflow: visible; padding: 10px; }
+  .table-wrap > table { display: none; }
+  .mobile-entry-list { display: grid; gap: 10px; }
+  .mobile-entry { display: grid; gap: 12px; padding: 14px; background: var(--background); border: 1px solid var(--line); border-radius: 8px; }
+  .mobile-entry-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .mobile-entry-heading h3 { margin: 0; overflow-wrap: anywhere; font-size: 15px; }
+  .mobile-entry-values { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0; }
+  .mobile-entry-values dt { color: var(--muted); font-size: 11px; }
+  .mobile-entry-values dd { margin: 4px 0 0; font-size: 14px; font-weight: 800; }
+  .mobile-entry-details { width: 100%; padding: 9px; border: 1px solid var(--line); border-radius: 7px; }
+  .toolbar-filters { grid-template-columns: minmax(0, 1fr); }
+  .tablet-entry-meta, .tablet-entry-actions { display: none; }
+  .mobile-entry-details { display: block; }
+}
 .brand { display: flex; gap: 12px; align-items: center; padding: 0 8px 24px; border-bottom: 1px solid #ffffff1c; }
 .sidebar-company-logo { width: 40px; height: 40px; flex: 0 0 40px; object-fit: contain; background: white; border-radius: 8px; padding: 3px; }
 .brand b, .brand small { display: block; }.brand b { font-size: 14px; }.brand small { color: #b9c0ba; font-size: 11px; margin-top: 3px; }

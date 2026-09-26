@@ -4,7 +4,8 @@ import type React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import useSWR, { mutate as mutateCache } from "swr";
+import { FaBars, FaTimes } from "react-icons/fa";
+import useSWR from "swr";
 import LedgerLoading from "@/components/LedgerLoading";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { firebaseAuth, allowedAdminEmail } from "@/lib/firebase-client";
@@ -67,6 +68,7 @@ function Field({
 }
 export default function DashboardApp({ view }: Props) {
   const [authorized, setAuthorized] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const {
     data: cachedEntries,
     error,
@@ -88,6 +90,7 @@ export default function DashboardApp({ view }: Props) {
   const [selected, setSelected] = useState<Entry | null>(null);
   const setFilter = (value: string) => {
     setFilterState(value);
+    setMenuOpen(false);
     window.dispatchEvent(new CustomEvent("dashboard-filter", { detail: value }));
   };
   const [form, setForm] = useState<EntryInput>(blank);
@@ -119,15 +122,12 @@ export default function DashboardApp({ view }: Props) {
             .toLowerCase()
             .includes(query.toLowerCase())),
     );
-    const sortDate = (entry: Entry) => {
-      if (entry.status !== "Complete") return entry.date;
-      let totalReceived = entry.advance;
-      for (const payment of entry.payments) {
-        totalReceived += n(payment.amount);
-        if (entry.deal > 0 && totalReceived >= entry.deal) return payment.date;
-      }
-      return entry.date;
-    };
+    const sortDate = (entry: Entry) =>
+      entry.payments.reduce(
+        (latest, payment) =>
+          payment.date && payment.date > latest ? payment.date : latest,
+        entry.date || "",
+      );
     const sorters: Record<string, (a: Entry, b: Entry) => number> = {
       "date-desc": (a, b) => sortDate(b).localeCompare(sortDate(a)),
       "date-asc": (a, b) => sortDate(a).localeCompare(sortDate(b)),
@@ -224,19 +224,36 @@ export default function DashboardApp({ view }: Props) {
 
   return (
     <div className="app-shell">
-      <aside className="sidebar">
+      {menuOpen && (
+        <button
+          className="sidebar-scrim"
+          aria-label="Close navigation menu"
+          onClick={() => setMenuOpen(false)}
+        />
+      )}
+      <aside
+        className={`sidebar${menuOpen ? " sidebar-open" : ""}`}
+        id="app-sidebar"
+      >
         <div className="brand">
           <Image className="sidebar-company-logo" src="/Easy Tech solution logo.png" alt="EASYTECH LONDON LTD logo" width={40} height={40} />
           <div>
             <b>EASYTECH LONDON LTD</b>
             <small>Client & payment ledger</small>
           </div>
+          <button
+            className="mobile-sidebar-close"
+            aria-label="Close navigation menu"
+            onClick={() => setMenuOpen(false)}
+          >
+            <FaTimes />
+          </button>
         </div>
         <nav>
-          <Link className={view === "dashboard" ? "active" : ""} href="/dashboard">
+          <Link className={view === "dashboard" ? "active" : ""} href="/dashboard" onClick={() => setMenuOpen(false)}>
             Dashboard
           </Link>
-          <Link className={view === "ledger" ? "active" : ""} href="/ledger">
+          <Link className={view === "ledger" ? "active" : ""} href="/ledger" onClick={() => setMenuOpen(false)}>
             All entries
           </Link>
         </nav>
@@ -272,6 +289,19 @@ export default function DashboardApp({ view }: Props) {
         </div>
       </aside>
       <main className="content">
+        <div className="mobile-topbar">
+          <button
+            className="menu-toggle"
+            aria-label="Open navigation menu"
+            aria-expanded={menuOpen}
+            aria-controls="app-sidebar"
+            onClick={() => setMenuOpen(true)}
+          >
+            <FaBars />
+          </button>
+          <Image src="/Easy Tech solution logo.png" alt="" width={32} height={32} />
+          <strong>EASYTECH LONDON LTD</strong>
+        </div>
         <header>
           <div>
             <p className="eyebrow">
@@ -289,7 +319,10 @@ export default function DashboardApp({ view }: Props) {
                 : `${entries.length} entries on the book`}
             </p>
           </div>
-          <button className="primary" onClick={openAdd}>
+          <button
+            className="primary responsive-add-header"
+            onClick={openAdd}
+          >
             + Add entry
           </button>
         </header>
@@ -301,6 +334,7 @@ export default function DashboardApp({ view }: Props) {
         {view === "dashboard" ? (
           <Overview
             entries={entries}
+            onAdd={openAdd}
             month={dashboardMonth}
             setMonth={setDashboardMonth}
             onPay={(entry) => {
@@ -311,6 +345,7 @@ export default function DashboardApp({ view }: Props) {
         ) : (
           <Ledger
             entries={filtered}
+            onAdd={openAdd}
             query={query}
             filter={filter}
             sort={sort}
@@ -358,11 +393,13 @@ export default function DashboardApp({ view }: Props) {
 
 function Overview({
   entries,
+  onAdd,
   month,
   setMonth,
   onPay,
 }: {
   entries: Entry[];
+  onAdd: () => void;
   month: string;
   setMonth: (value: string) => void;
   onPay: (entry: Entry) => void;
@@ -504,6 +541,10 @@ function Overview({
           <strong>{money(due)}</strong>
           <small>{owing.length} clients owing</small>
         </article>
+        <button className="add-entry-stat" onClick={onAdd}>
+          <span>+</span>
+          Add entry
+        </button>
       </div>
       <div className="summary-grid">
         <section className="panel">
@@ -534,7 +575,7 @@ function Overview({
             </div>
           </dl>
         </section>
-        <section className="panel">
+        <section className="panel month-by-month">
           <div className="panel-heading">
             <div>
               <h2>Month by month</h2>
@@ -617,6 +658,7 @@ function Overview({
 
 function Ledger({
   entries,
+  onAdd,
   query,
   filter,
   sort,
@@ -629,6 +671,7 @@ function Ledger({
   onStart,
 }: {
   entries: Entry[];
+  onAdd: () => void;
   query: string;
   filter: string;
   sort: string;
@@ -655,40 +698,6 @@ function Ledger({
     printWindow.document.close();
     printWindow.focus();
     printWindow.print();
-  };
-  const importEntries = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-    if (!file) return;
-    try {
-      const imported = await api<{ imported: number }>("/entries/import", {
-        method: "POST",
-        body: JSON.stringify(JSON.parse(await file.text())),
-      });
-      alert(`${imported.imported} entries imported successfully.`);
-      await mutateCache(ENTRIES_CACHE_KEY, fetchEntries(), {
-        revalidate: false,
-      });
-    } catch (error) {
-      alert(
-        error instanceof Error ? error.message : "Could not import entries",
-      );
-    }
-  };
-  const exportEntries = () => {
-    const content = JSON.stringify(
-      entries.map(({ _id, createdAt, updatedAt, ...entry }) => entry),
-      null,
-      2,
-    );
-    const url = URL.createObjectURL(
-      new Blob([content], { type: "application/json" }),
-    );
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `easytech-entries-${today()}.json`;
-    link.click();
-    URL.revokeObjectURL(url);
   };
   const activeEntries = entries.filter(
     (entry) => !["Pending", "Cancelled"].includes(entry.status),
@@ -730,7 +739,7 @@ function Ledger({
   return (
     <section className="stack">
       <div className="ledger-stats">
-        <article>
+        <article className="entries-count">
           <span>Entries shown</span>
           <strong>{entries.length}</strong>
           <small>
@@ -739,17 +748,17 @@ function Ledger({
             owing
           </small>
         </article>
-        <article>
+        <article className="active-deal-stat">
           <span>Active deal amount</span>
           <strong>{money(visibleDeal)}</strong>
           <small>Excludes pending deals</small>
         </article>
-        <article className="green">
+        <article className="green received-stat">
           <span>Total received</span>
           <strong>{money(visibleReceived)}</strong>
           <small>Advance + later payments</small>
         </article>
-        <article className="red">
+        <article className="red remaining-stat">
           <span>Remaining due</span>
           <strong>{money(visibleDue)}</strong>
           <small>
@@ -757,6 +766,10 @@ function Ledger({
             to follow up
           </small>
         </article>
+        <button className="add-entry-stat" onClick={onAdd}>
+          <span>+</span>
+          Add entry
+        </button>
         <article className="pending-card">
           <span>Pending discussions</span>
           <strong>{money(pendingDeal)}</strong>
@@ -772,38 +785,29 @@ function Ledger({
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search client, service, phone, reference or email"
         />
-        <select
-          value={filter}
-          onChange={(event) => setFilter(event.target.value)}
-        >
-          <option value="all">All statuses</option>
-          {STATUSES.map((status) => (
-            <option key={status} value={status}>
-              {status}
-            </option>
-          ))}
-        </select>
-        <select value={sort} onChange={(event) => setSort(event.target.value)}>
-          <option value="date-desc">Newest first</option>
-          <option value="date-asc">Oldest first</option>
-          <option value="due-desc">Biggest due first</option>
-          <option value="deal-desc">Biggest deal first</option>
-          <option value="name-asc">Client A-Z</option>
-        </select>
-        <button className="print-button" onClick={printReport}>
-          Save as PDF
-        </button>
-        <label className="print-button import-button">
-          Import JSON
-          <input
-            type="file"
-            accept=".json,application/json"
-            onChange={importEntries}
-          />
-        </label>
-        <button className="print-button" onClick={exportEntries}>
-          Export JSON
-        </button>
+        <div className="toolbar-filters">
+          <select
+            value={filter}
+            onChange={(event) => setFilter(event.target.value)}
+          >
+            <option value="all">All statuses</option>
+            {STATUSES.map((status) => (
+              <option key={status} value={status}>
+                {status}
+              </option>
+            ))}
+          </select>
+          <select value={sort} onChange={(event) => setSort(event.target.value)}>
+            <option value="date-desc">Newest first</option>
+            <option value="date-asc">Oldest first</option>
+            <option value="due-desc">Biggest due first</option>
+            <option value="deal-desc">Biggest deal first</option>
+            <option value="name-asc">Client A-Z</option>
+          </select>
+          <button className="print-button phone-hide" onClick={printReport}>
+            Save as PDF
+          </button>
+        </div>
       </div>
       <div className="table-wrap">
         <table>
@@ -859,6 +863,55 @@ function Ledger({
             </tr>
           </tfoot>
         </table>
+        <div className="mobile-entry-list">
+          {pageEntries.map((entry) => (
+            <article className="mobile-entry" key={entry._id}>
+              <div className="mobile-entry-heading">
+                <h3>{entry.client}</h3>
+                <Badge status={entry.status} />
+              </div>
+              <dl className="mobile-entry-values">
+                <div>
+                  <dt>Deal</dt>
+                  <dd>{money(entry.deal)}</dd>
+                </div>
+                <div>
+                  <dt>Remaining</dt>
+                  <dd className={remaining(entry) ? "red-text" : ""}>
+                    {entry.status === "Pending" ? "—" : money(remaining(entry))}
+                  </dd>
+                </div>
+              </dl>
+              <div className="tablet-entry-meta">
+                <div>
+                  <small>Work date</small>
+                  <span>{prettyDate(entry.date)}</span>
+                </div>
+                <div>
+                  <small>Service</small>
+                  <span>{entry.service}</span>
+                </div>
+              </div>
+              <div className="tablet-entry-actions">
+                {entry.status === "Pending" ? (
+                  <button onClick={() => onStart(entry)}>Start</button>
+                ) : remaining(entry) > 0 ? (
+                  <button className="success" onClick={() => onPay(entry)}>
+                    Add money
+                  </button>
+                ) : null}
+                <button onClick={() => onDetails(entry)}>Details</button>
+                <button onClick={() => onEdit(entry)}>Edit</button>
+              </div>
+              <button
+                className="link-button mobile-entry-details"
+                onClick={() => onDetails(entry)}
+              >
+                Details
+              </button>
+            </article>
+          ))}
+        </div>
         {!entries.length && (
           <p className="empty">No entry matches this search.</p>
         )}
@@ -990,6 +1043,21 @@ function Editor({
             value={form.advance || ""}
             onChange={(event) => update("advance", Number(event.target.value))}
           />
+          {selected && (
+            <Field
+              label="Remaining due (£)"
+              type="number"
+              min="0"
+              step="0.01"
+              value={remaining(form)}
+              onChange={(event) =>
+                update(
+                  "deal",
+                  received(form) + Math.max(0, Number(event.target.value) || 0),
+                )
+              }
+            />
+          )}
           <Field
             label="Email"
             type="email"

@@ -60,23 +60,22 @@ MongoDB connection lazy: server চালু হলেই সাধারণত 
 ## Protected ledger request flow
 
 ```mermaid
-sequenceDiagram
-    participant U as Admin browser
-    participant A as Next.js API
-    participant F as Firebase Admin
-    participant M as MongoDB
-    participant W as WhatsApp Graph API
+flowchart TD
+    Browser[Admin browser sends Bearer token]
+    API[Next.js API validates request]
+    Verify[Firebase Admin verifies token and admin email]
+    Database[Mongoose reads or writes Entry]
+    Mongo[(MongoDB)]
+    Notify[Optional WhatsApp notification]
+    Result[API returns JSON response]
 
-    U->>A: Bearer Firebase ID token + ledger request
-    A->>F: Verify token, verified email, admin allowlist
-    F-->>A: Authorized identity
-    A->>M: connectDB(), then read/write Entry
-    M-->>A: Ledger result
-    opt Create/update/payment notification
-        A->>W: Send WhatsApp notification
-        W-->>A: Notification response
-    end
-    A-->>U: JSON response
+    Browser --> API
+    API --> Verify
+    Verify -->|Authorized| Database
+    Database --> Mongo
+    Database -->|Create update or payment event| Notify
+    Mongo --> Result
+    Notify --> Result
 ```
 
 ## Legacy JWT login

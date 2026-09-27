@@ -38,10 +38,10 @@ export default function AdminLoginPage() {
   return (
     <main className="auth-page">
       <section className="auth-panel">
-        <Link href="/" aria-label="EASYTECH LONDON LTD home" style={{ textDecoration: 'none' }}>
-          <Image src="/Easy Tech solution logo.png" alt="EASYTECH LONDON LTD" width={56} height={56} style={{ objectFit: 'contain' }} priority />
+        <Link href="/" aria-label="EASY TECH LONDON LTD home" style={{ textDecoration: 'none' }}>
+          <Image src="/Easy Tech solution logo.png" alt="EASY TECH LONDON LTD" width={56} height={56} style={{ objectFit: 'contain' }} priority />
         </Link>
-        <p className="eyebrow">EASYTECH LONDON LTD · ADMIN</p>
+        <p className="eyebrow">EASY TECH LONDON LTD · ADMIN</p>
         <h1>Admin sign in</h1>
         <p className="muted">Sign in with your authorised administrator account to manage the ledger.</p>
         {error && <p className="error" role="alert">{error}</p>}

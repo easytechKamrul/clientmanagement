@@ -236,9 +236,9 @@ export default function DashboardApp({ view }: Props) {
         id="app-sidebar"
       >
         <div className="brand">
-          <Image className="sidebar-company-logo" src="/Easy Tech solution logo.png" alt="EASYTECH LONDON LTD logo" width={40} height={40} />
+          <Image className="sidebar-company-logo" src="/Easy Tech solution logo.png" alt="EASY TECH LONDON LTD logo" width={40} height={40} />
           <div>
-            <b>EASYTECH LONDON LTD</b>
+            <b>EASY TECH LONDON LTD</b>
             <small>Client & payment ledger</small>
           </div>
           <button
@@ -300,12 +300,12 @@ export default function DashboardApp({ view }: Props) {
             <FaBars />
           </button>
           <Image src="/Easy Tech solution logo.png" alt="" width={32} height={32} />
-          <strong>EASYTECH LONDON LTD</strong>
+          <strong>EASY TECH LONDON LTD</strong>
         </div>
         <header>
           <div>
             <p className="eyebrow">
-              EASYTECH LONDON LTD /{" "}
+              EASY TECH LONDON LTD /{" "}
               {view === "dashboard" ? "OVERVIEW" : "LEDGER"}
             </p>
             <h1>
@@ -693,7 +693,7 @@ function Ledger({
     const printWindow = window.open("", "_blank");
     if (!printWindow) return;
     printWindow.document.write(
-      `<html><head><title>EASYTECH LONDON LTD - Client Report</title><style>body{font-family:Arial,sans-serif;color:#18221f;padding:24px}h1{font-size:22px}p{color:#66716b}table{width:100%;border-collapse:collapse;font-size:12px;margin-top:18px}th,td{border:1px solid #cfd6d1;padding:8px;text-align:left}th{background:#e8eeeb}</style></head><body><h1>EASYTECH LONDON LTD - Client & Payment Report</h1><p>${entries.length} entries shown · Printed ${prettyDate(today())}</p><table><thead><tr><th>Date</th><th>Client</th><th>Service</th><th>Status</th><th>Deal</th><th>Remaining</th><th>Reference</th><th>Phone</th></tr></thead><tbody>${rows}</tbody></table></body></html>`,
+      `<html><head><title>EASY TECH LONDON LTD - Client Report</title><style>body{font-family:Arial,sans-serif;color:#18221f;padding:24px}h1{font-size:22px}p{color:#66716b}table{width:100%;border-collapse:collapse;font-size:12px;margin-top:18px}th,td{border:1px solid #cfd6d1;padding:8px;text-align:left}th{background:#e8eeeb}</style></head><body><h1>EASY TECH LONDON LTD - Client & Payment Report</h1><p>${entries.length} entries shown · Printed ${prettyDate(today())}</p><table><thead><tr><th>Date</th><th>Client</th><th>Service</th><th>Status</th><th>Deal</th><th>Remaining</th><th>Reference</th><th>Phone</th></tr></thead><tbody>${rows}</tbody></table></body></html>`,
     );
     printWindow.document.close();
     printWindow.focus();
@@ -964,7 +964,7 @@ function Editor({
   const [serviceOptions, setServiceOptions] = useState<string[]>(() => {
     if (typeof window === "undefined") return SERVICE_OPTIONS;
     const saved = JSON.parse(
-      localStorage.getItem("easytech-services") || "[]",
+      localStorage.getItem("EASY TECH-services") || "[]",
     ) as unknown;
     return Array.isArray(saved)
       ? [
@@ -982,7 +982,7 @@ function Editor({
     if (!service || serviceOptions.includes(service)) return;
     const next = [...serviceOptions, service];
     setServiceOptions(next);
-    localStorage.setItem("easytech-services", JSON.stringify(next));
+    localStorage.setItem("EASY TECH-services", JSON.stringify(next));
   };
   return (
     <div className="modal-backdrop">

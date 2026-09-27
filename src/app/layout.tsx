@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "EASYTECH LONDON LTD | Your One-Stop Service & Support",
+  title: "EASY TECH LONDON LTD | Your One-Stop Service & Support",
   description: "Your trusted partner for IT, driver support, insurance, admissions, and travel solutions.",
   icons: {
     icon: "/Easy%20Tech%20solution%20logo.png",

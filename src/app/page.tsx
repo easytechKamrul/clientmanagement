@@ -58,7 +58,7 @@ export default function Home() {
           <div className={styles.logoBox}>
             <Image
               src="/Easy Tech solution logo.png"
-              alt="EASYTECH LONDON LTD"
+              alt="EASY TECH LONDON LTD"
               width={70}
               height={70}
               priority
@@ -66,7 +66,7 @@ export default function Home() {
           </div>
 
           <div className={styles.brandText}>
-            <strong>EASYTECH</strong>
+            <strong>EASY TECH</strong>
             <span>LONDON LTD</span>
           </div>
         </a>
@@ -103,7 +103,7 @@ export default function Home() {
           </h1>
 
           <p className={styles.heroDescription}>
-            EASYTECH LONDON LTD helps individuals and working professionals
+            EASY TECH LONDON LTD helps individuals and working professionals
             with IT, delivery driver support, insurance, education,
             documentation and travel services.
           </p>
@@ -141,7 +141,7 @@ export default function Home() {
             <div className={styles.visualCircle}>
               <Image
                 src="/Easy Tech solution logo.png"
-                alt="EasyTech London"
+                alt="EASY TECH London"
                 width={190}
                 height={190}
               />
@@ -260,7 +260,7 @@ export default function Home() {
       <section className={styles.about} id="about">
         <div className={styles.aboutVisual}>
           <div className={styles.aboutBox}>
-            <span className={styles.aboutSmall}>EASYTECH</span>
+            <span className={styles.aboutSmall}>EASY TECH</span>
 
             <strong>
               EASY
@@ -293,7 +293,7 @@ export default function Home() {
           </h2>
 
           <p>
-            EASYTECH LONDON LTD is an Information Technology Company
+            EASY TECH LONDON LTD is an Information Technology Company
             focused on making essential services easier to access.
           </p>
 
@@ -329,7 +329,7 @@ export default function Home() {
         </div>
 
         <a href="#contact" className={styles.ctaButton}>
-          Contact EASYTECH
+          Contact EASY TECH
           <span>↗</span>
         </a>
       </section>
@@ -341,13 +341,13 @@ export default function Home() {
             <a href="#home" className={styles.footerLogo}>
               <Image
                 src="/Easy Tech solution logo.png"
-                alt="EASYTECH LONDON LTD"
+                alt="EASY TECH LONDON LTD"
                 width={65}
                 height={65}
               />
 
               <div>
-                <strong>EASYTECH</strong>
+                <strong>EASY TECH</strong>
                 <span>LONDON LTD</span>
               </div>
             </a>
@@ -360,9 +360,9 @@ export default function Home() {
           <div className={styles.footerContact}>
   <span>GET IN TOUCH</span>
 
-  <a href="mailto:easytechsolutionuk@gmail.com" className={styles.contactItem}>
+  <a href="mailto:EASY TECHsolutionuk@gmail.com" className={styles.contactItem}>
     <FaEnvelope className={styles.emailIcon} />
-    <span>easytechsolutionuk@gmail.com</span>
+    <span>EASY TECHsolutionuk@gmail.com</span>
     <b>↗</b>
   </a>
 
@@ -388,7 +388,7 @@ export default function Home() {
 
         <div className={styles.footerBottom}>
           <span>
-            © {new Date().getFullYear()} EASYTECH LONDON LTD
+            © {new Date().getFullYear()} EASY TECH LONDON LTD
           </span>
 
           <span>Information Technology Company</span>

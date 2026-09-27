@@ -48,6 +48,15 @@ const SERVICE_OPTIONS = [
   "Other",
 ];
 
+function serviceTone(service: string) {
+  const value = service.toLowerCase();
+  if (value.includes("just eat")) return "service-tone-just-eat";
+  if (value.includes("deliveroo") || value.includes("delevero"))
+    return "service-tone-deliveroo";
+  if (value.includes("vehicle")) return "service-tone-vehicle";
+  return "service-tone-default";
+}
+
 function Badge({ status }: { status: EntryStatus }) {
   return (
     <span className={`badge badge-${status.toLowerCase().replace(" ", "-")}`}>
@@ -837,7 +846,7 @@ function Ledger({
                   </td>
                   <td>{money(entry.deal)}</td>
                   <td className={due ? "red-text" : ""}>
-                    {entry.status === "Pending" ? "—" : money(due)}
+                    {entry.status === "Pending" || due === 0 ? "-" : money(due)}
                   </td>
                   <td className="actions">
                     {entry.status === "Pending" ? (
@@ -878,7 +887,9 @@ function Ledger({
                 <div>
                   <dt>Remaining</dt>
                   <dd className={remaining(entry) ? "red-text" : ""}>
-                    {entry.status === "Pending" ? "—" : money(remaining(entry))}
+                    {entry.status === "Pending" || remaining(entry) === 0
+                      ? "-"
+                      : money(remaining(entry))}
                   </dd>
                 </div>
               </dl>
@@ -889,7 +900,9 @@ function Ledger({
                 </div>
                 <div>
                   <small>Service</small>
-                  <span>{entry.service}</span>
+                  <span className={`service-type ${serviceTone(entry.service)}`}>
+                    {entry.service}
+                  </span>
                 </div>
               </div>
               <div className="tablet-entry-actions">
@@ -960,7 +973,18 @@ function Editor({
   onClose: () => void;
 }) {
   const update = (key: keyof EntryInput, value: string | number) =>
-    setForm((current) => ({ ...current, [key]: value }));
+    setForm((current) => {
+      const next = { ...current, [key]: value };
+      if (
+        !selected &&
+        (key === "deal" || key === "advance") &&
+        next.deal > 0 &&
+        next.deal === next.advance
+      ) {
+        next.status = "Progress";
+      }
+      return next;
+    });
   const [serviceOptions, setServiceOptions] = useState<string[]>(() => {
     if (typeof window === "undefined") return SERVICE_OPTIONS;
     const saved = JSON.parse(

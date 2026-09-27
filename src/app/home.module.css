@@ -595,7 +595,7 @@
 
   padding: 34px 32px 84px;
 
-  background: #ffffff;
+  background: #f4f8ff;
   border: 1px solid transparent;
   border-radius: 18px;
 
@@ -609,6 +609,14 @@
   box-shadow: 0 35px 70px rgba(3, 10, 22, 0.45);
 }
 
+.serviceCard:nth-child(2) {
+  background: #f2fbf8;
+}
+
+.serviceCard:nth-child(3) {
+  background: #fff8ef;
+}
+
 .serviceCard::before {
   content: '';
   position: absolute;
@@ -617,13 +625,21 @@
   right: 24px;
   height: 3px;
 
-  background: linear-gradient(90deg, #2f80ed, #48c6ff);
+  background: #2f80ed;
   border-radius: 0 0 3px 3px;
 
   opacity: 0;
   transform: scaleX(0.3);
   transform-origin: center;
   transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.serviceCard:nth-child(2)::before {
+  background: #18a678;
+}
+
+.serviceCard:nth-child(3)::before {
+  background: #e68a24;
 }
 
 .serviceCard:hover::before {
@@ -633,6 +649,7 @@
 
 .serviceCardTop {
   display: flex;
+  align-items: center;
   align-items: center;
   justify-content: space-between;
 }
@@ -745,6 +762,14 @@
   line-height: 1.5;
 }
 
+.serviceCard:nth-child(2) li {
+  color: #147a5b;
+}
+
+.serviceCard:nth-child(3) li {
+  color: #a85d16;
+}
+
 .serviceCard li span {
   flex-shrink: 0;
   margin-top: 4px;
@@ -755,6 +780,14 @@
 
   background: #2f80ed;
   font-size: 0;
+}
+
+.serviceCard:nth-child(2) li span {
+  background: #18a678;
+}
+
+.serviceCard:nth-child(3) li span {
+  background: #e68a24;
 }
 
 .serviceLink {

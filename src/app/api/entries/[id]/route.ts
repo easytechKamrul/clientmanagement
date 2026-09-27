@@ -18,6 +18,10 @@ export async function PUT(request: NextRequest, context: { params: Promise<{ id:
     if (body.deal !== undefined) entry.deal = Number(body.deal) || 0; if (body.advance !== undefined) entry.advance = Number(body.advance) || 0; if (body.payments !== undefined) entry.payments = body.payments;
     if (body.commission !== undefined) entry.commission = Number(body.commission) || 0; if (body.reference !== undefined) entry.reference = body.reference; if (body.email !== undefined) entry.email = body.email; if (body.phone !== undefined) entry.phone = body.phone; if (body.notes !== undefined) entry.notes = body.notes;
     await entry.save();
+    if (body.status !== undefined) {
+      await Entry.updateOne({ _id: id }, { $set: { status: body.status } });
+      entry.status = body.status;
+    }
     if (old.status !== entry.status || old.deal !== entry.deal || old.service !== entry.service) await sendWhatsAppNotification(entry, 'updated');
     return NextResponse.json(entry.toObject());
   } catch (error) { return failure(error); }

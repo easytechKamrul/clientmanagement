@@ -88,6 +88,11 @@ button { cursor: pointer; }
   .tablet-entry-meta div { display: grid; gap: 4px; min-width: 0; }
   .tablet-entry-meta small { color: var(--muted); font-size: 10px; }
   .tablet-entry-meta span { overflow-wrap: anywhere; font-size: 12px; }
+  .tablet-entry-meta .service-type { font-weight: 800; }
+  .tablet-entry-meta .service-tone-default { color: var(--foreground); }
+  .tablet-entry-meta .service-tone-just-eat { color: #2474b5; }
+  .tablet-entry-meta .service-tone-deliveroo { color: #16845d; }
+  .tablet-entry-meta .service-tone-vehicle { color: #b86a16; }
   .tablet-entry-actions { display: flex; flex-wrap: wrap; gap: 8px; }
   .tablet-entry-actions button { border: 1px solid var(--line); border-radius: 7px; padding: 8px 10px; background: var(--paper); color: var(--foreground); font-size: 12px; font-weight: 750; }
   .tablet-entry-actions button.success { border: 0; background: var(--green); color: white; }

@@ -12,13 +12,4 @@ const entrySchema = new Schema<IEntry>({
   payments: { type: [paymentSchema], default: [] }, commission: { type: Number, min: 0, default: 0 }, reference: { type: String, default: '', trim: true }, email: { type: String, default: '', trim: true }, phone: { type: String, default: '', trim: true }, notes: { type: String, default: '', trim: true }, startedDate: String
 }, { timestamps: true });
 
-export function applyAutoStatus(entry: Pick<IEntry, 'deal' | 'advance' | 'payments' | 'status'>) {
-  if (entry.status === 'Cancelled' || entry.status === 'Pending') return entry.status;
-  const received = entry.advance + entry.payments.reduce((sum, payment) => sum + payment.amount, 0);
-  const remaining = Math.max(0, entry.deal - received);
-  if (entry.deal > 0 && remaining === 0) return 'Complete';
-  if (entry.status === 'Complete' && remaining > 0) return 'Due Later';
-  return entry.status;
-}
-entrySchema.pre('save', function () { this.status = applyAutoStatus(this) as EntryStatus; });
 export default models.Entry || model<IEntry>('Entry', entrySchema);

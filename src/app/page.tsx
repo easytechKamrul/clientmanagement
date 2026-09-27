@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import styles from './home.module.css';
 import { FaEnvelope, FaWhatsapp } from 'react-icons/fa';
+
 const serviceGroups = [
   {
     number: '01',
@@ -58,7 +59,7 @@ export default function Home() {
           <div className={styles.logoBox}>
             <Image
               src="/Easy Tech solution logo.png"
-              alt="EASY TECH LONDON LTD"
+              alt="EASYTECH LONDON LTD"
               width={70}
               height={70}
               priority
@@ -66,7 +67,7 @@ export default function Home() {
           </div>
 
           <div className={styles.brandText}>
-            <strong>EASY TECH</strong>
+            <strong>EASYTECH</strong>
             <span>LONDON LTD</span>
           </div>
         </a>
@@ -103,7 +104,7 @@ export default function Home() {
           </h1>
 
           <p className={styles.heroDescription}>
-            EASY TECH LONDON LTD helps individuals and working professionals
+            EASYTECH LONDON LTD helps individuals and working professionals
             with IT, delivery driver support, insurance, education,
             documentation and travel services.
           </p>
@@ -141,7 +142,7 @@ export default function Home() {
             <div className={styles.visualCircle}>
               <Image
                 src="/Easy Tech solution logo.png"
-                alt="EASY TECH London"
+                alt="EASYTECH LONDON LTD"
                 width={190}
                 height={190}
               />
@@ -260,7 +261,7 @@ export default function Home() {
       <section className={styles.about} id="about">
         <div className={styles.aboutVisual}>
           <div className={styles.aboutBox}>
-            <span className={styles.aboutSmall}>EASY TECH</span>
+            <span className={styles.aboutSmall}>EASYTECH</span>
 
             <strong>
               EASY
@@ -293,7 +294,7 @@ export default function Home() {
           </h2>
 
           <p>
-            EASY TECH LONDON LTD is an Information Technology Company
+            EASYTECH LONDON LTD (Company No: 17165157, formerly UK Bangla Creation Ltd) is an Information Technology Company
             focused on making essential services easier to access.
           </p>
 
@@ -329,7 +330,7 @@ export default function Home() {
         </div>
 
         <a href="#contact" className={styles.ctaButton}>
-          Contact EASY TECH
+          Contact EASYTECH
           <span>↗</span>
         </a>
       </section>
@@ -341,37 +342,37 @@ export default function Home() {
             <a href="#home" className={styles.footerLogo}>
               <Image
                 src="/Easy Tech solution logo.png"
-                alt="EASY TECH LONDON LTD"
+                alt="EASYTECH LONDON LTD"
                 width={65}
                 height={65}
               />
 
               <div>
-                <strong>EASY TECH</strong>
+                <strong>EASYTECH</strong>
                 <span>LONDON LTD</span>
               </div>
             </a>
 
             <p>
-              Your one-stop service &amp; support partner in the UK.
+              Your one-stop service &amp; support partner in the UK. (Company No: 17165157)
             </p>
           </div>
 
           <div className={styles.footerContact}>
-  <span>GET IN TOUCH</span>
+            <span>GET IN TOUCH</span>
 
-  <a href="mailto:EASY TECHsolutionuk@gmail.com" className={styles.contactItem}>
-    <FaEnvelope className={styles.emailIcon} />
-    <span>EASY TECHsolutionuk@gmail.com</span>
-    <b>↗</b>
-  </a>
+            <a href="mailto:EASYTECHsolutionuk@gmail.com" className={styles.contactItem}>
+              <FaEnvelope className={styles.emailIcon} />
+              <span>EASYTECHsolutionuk@gmail.com</span>
+              <b>↗</b>
+            </a>
 
-  <a href="https://wa.me/447514585898" target="_blank" rel="noopener noreferrer" className={styles.contactItem}>
-    <FaWhatsapp className={styles.whatsappIcon} />
-    <span>+44 7514 585898</span>
-    <b>↗</b>
-  </a>
-</div>
+            <a href="https://wa.me/447514585898" target="_blank" rel="noopener noreferrer" className={styles.contactItem}>
+              <FaWhatsapp className={styles.whatsappIcon} />
+              <span>+44 7514 585898</span>
+              <b>↗</b>
+            </a>
+          </div>
 
           <div className={styles.footerAddress}>
             <span>OUR LOCATION</span>
@@ -388,10 +389,10 @@ export default function Home() {
 
         <div className={styles.footerBottom}>
           <span>
-            © {new Date().getFullYear()} EASY TECH LONDON LTD
+            © {new Date().getFullYear()} EASYTECH LONDON LTD. All rights reserved.
           </span>
 
-          <span>Information Technology Company</span>
+          <span>Company No: 17165157</span>
 
           <Link href="/admin/login">
             Admin Login ↗

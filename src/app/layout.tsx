@@ -22,12 +22,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        {/* Facebook Domain Verification Tag */}
+        <meta name="facebook-domain-verification" content="zntplbbc60432ad01mr1o4v2gy1njv" />
+      </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

@@ -4,7 +4,7 @@ import type { IEntry } from '../models/Entry';
 type EventName = 'document_pending' | 'work_started' | 'payment_received' | 'work_finished' | 'completed';
 
 function normalizePhone(raw: string): string {
-  let d = (raw || '').replace(/[^0-9]/g, '');
+  const d = (raw || '').replace(/[^0-9]/g, '');
   if (!d) return '';
   if (d.startsWith('00')) return d.slice(2);
   if (d.startsWith('44') && d.length === 12) return d;
@@ -101,4 +101,24 @@ export async function sendWhatsAppNotification(entry: IEntry, event: EventName, 
   } catch (error) {
     console.error('[whatsapp] request failed', error);
   }
+}
+
+export async function sendWhatsAppStatusNotification(entry: IEntry) {
+  let event: EventName;
+  switch (entry.status) {
+    case 'Pending':
+      event = 'document_pending';
+      break;
+    case 'Progress':
+      event = 'work_started';
+      break;
+    case 'Complete': {
+      const totalPaid = entry.advance + entry.payments.reduce((sum, payment) => sum + payment.amount, 0);
+      event = entry.deal > totalPaid ? 'work_finished' : 'completed';
+      break;
+    }
+    default:
+      return;
+  }
+  await sendWhatsAppNotification(entry, event);
 }

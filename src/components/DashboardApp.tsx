@@ -64,6 +64,31 @@ function Badge({ status }: { status: EntryStatus }) {
     </span>
   );
 }
+function activeDate(entry: Entry) {
+  const dates = [
+    { date: entry.date, label: "", priority: 0 },
+    ...(entry.payments || []).map((payment) => ({
+      date: payment.date,
+      label: "Additional payment",
+      priority: 1,
+    })),
+    ...(entry.updateHistory || []).map((update) => ({
+      date: update.date,
+      label: update.description,
+      priority: 2,
+    })),
+  ];
+  return dates.reduce((latest, current) =>
+    current.date > latest.date ||
+    (current.date === latest.date && current.priority > latest.priority)
+      ? current
+      : latest,
+  );
+}
+function formatActiveDate(entry: Entry) {
+  const active = activeDate(entry);
+  return `${prettyDate(active.date)}${active.label ? ` (${active.label})` : ""}`;
+}
 function Field({
   label,
   ...props
@@ -131,12 +156,7 @@ export default function DashboardApp({ view }: Props) {
             .toLowerCase()
             .includes(query.toLowerCase())),
     );
-    const sortDate = (entry: Entry) =>
-      entry.payments.reduce(
-        (latest, payment) =>
-          payment.date && payment.date > latest ? payment.date : latest,
-        entry.date || "",
-      );
+    const sortDate = (entry: Entry) => activeDate(entry).date || "";
     const sorters: Record<string, (a: Entry, b: Entry) => number> = {
       "date-desc": (a, b) => sortDate(b).localeCompare(sortDate(a)),
       "date-asc": (a, b) => sortDate(a).localeCompare(sortDate(b)),
@@ -696,7 +716,7 @@ function Ledger({
     const rows = entries
       .map(
         (entry) =>
-          `<tr><td>${prettyDate(entry.date)}</td><td>${entry.client}</td><td>${entry.service}</td><td>${entry.status}</td><td>${money(entry.deal)}</td><td>${entry.status === "Pending" ? "-" : money(remaining(entry))}</td><td>${entry.reference || "-"}</td><td>${entry.phone || "-"}</td></tr>`,
+          `<tr><td>${formatActiveDate(entry)}</td><td>${entry.client}</td><td>${entry.service}</td><td>${entry.status}</td><td>${money(entry.deal)}</td><td>${entry.status === "Pending" ? "-" : money(remaining(entry))}</td><td>${entry.reference || "-"}</td><td>${entry.phone || "-"}</td></tr>`,
       )
       .join("");
     const printWindow = window.open("", "_blank");
@@ -836,7 +856,7 @@ function Ledger({
               const due = entry.status === "Pending" ? 0 : remaining(entry);
               return (
                 <tr key={entry._id}>
-                  <td>{prettyDate(entry.date)}</td>
+                  <td>{formatActiveDate(entry)}</td>
                   <td>
                     <b>{entry.client}</b>
                   </td>
@@ -1020,6 +1040,7 @@ function Editor({
             label="Working date"
             type="date"
             value={form.date}
+            disabled={Boolean(selected)}
             onChange={(event) => update("date", event.target.value)}
           />
           <Field
@@ -1187,6 +1208,12 @@ function Details({
               <dd>—</dd>
             </div>
           )}
+          {(entry.updateHistory || []).map((update, index) => (
+            <div key={`${update.date}-${index}`}>
+              <dt>Update · {prettyDate(update.date)}</dt>
+              <dd>{update.description}</dd>
+            </div>
+          ))}
           <div>
             <dt>Phone</dt>
             <dd>{entry.phone || "—"}</dd>

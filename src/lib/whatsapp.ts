@@ -2,17 +2,24 @@ import type { IEntry } from '../models/Entry';
 
 // নতুন ৫টি ইভেন্ট বা স্ট্যাটাস অনুযায়ী সাজানো
 type EventName = 'document_pending' | 'work_started' | 'payment_received' | 'work_finished' | 'completed';
-
 function normalizePhone(raw: string): string {
   const d = (raw || '').replace(/[^0-9]/g, '');
   if (!d) return '';
   if (d.startsWith('00')) return d.slice(2);
-  if (d.startsWith('44') && d.length === 12) return d;
+  
+  // যদি নাম্বারটি 880 দিয়ে শুরু হয় এবং মোট ১৩ ডিজিট হয়
   if (d.startsWith('880') && d.length === 13) return d;
+  
+  // যদি নাম্বারটি 01 দিয়ে শুরু হয় এবং ১১ ডিজিটের হয় (বাংলাদেশের মোবাইল নম্বর) -> 88 যোগ হবে
   if (d.startsWith('01') && d.length === 11) return `88${d}`;
-  if (d.startsWith('0')) return `44${d.slice(1)}`;
-  if (d.length === 10 && d.startsWith('7')) return `44${d}`;
+  
+  // যদি শুধু 1 দিয়ে শুরু হয় এবং ১০ ডিজিট হয় -> 880 যোগ হবে
   if (d.length === 10 && d.startsWith('1')) return `880${d}`;
+  
+  // ইউকে (UK) বা অন্য দেশের জন্য আগের নিয়ম
+  if (d.startsWith('44') && d.length === 12) return d;
+  if (d.startsWith('0') && d.length === 11) return `44${d.slice(1)}`;
+  
   return d;
 }
 

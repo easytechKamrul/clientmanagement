@@ -1,6 +1,6 @@
 import type { IEntry } from '../models/Entry';
 
-// নতুন ৫টি ইভেন্ট বা স্ট্যাটাস অনুযায়ী সাজানো
+// নতুন ৫টি ইভেন্ট বা স্ট্যাটাস অনুযায়ী সাজানো
 type EventName = 'document_pending' | 'work_started' | 'payment_received' | 'work_finished' | 'completed';
 
 function normalizePhone(raw: string): string {
@@ -26,8 +26,8 @@ export async function sendWhatsAppNotification(entry: IEntry, event: EventName, 
   const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
   const to = normalizePhone(entry.phone || '');
 
-  // পরিবেশ ভেরিয়েবল থেকে ৫টি টেমপ্লেট নেম নেওয়া
-  const docTemplate = process.env.WHATSAPP_TEMPLATE_DOC;               // 1. Document checklist
+  // পরিবেশ ভেরিয়েবল থেকে ৫টি টেমপ্লেট নেম নেওয়া
+  const docTemplate = process.env.WHATSAPP_TEMPLATE_DOC;                 // 1. Document checklist
   const startedTemplate = process.env.WHATSAPP_TEMPLATE_STARTED;       // 2. Work started
   const paymentTemplate = process.env.WHATSAPP_TEMPLATE_PAYMENT;     // 3. Payment received
   const finishedTemplate = process.env.WHATSAPP_TEMPLATE_FINISHED;   // 4. Work finished/waiting
@@ -39,31 +39,38 @@ export async function sendWhatsAppNotification(entry: IEntry, event: EventName, 
   let templateName: string | undefined;
   let params: unknown[] = [];
 
-  // ইভেন্ট অনুযায়ী টেমপ্লেট এবং প্যারামিটার সেটআপ
+  // ইভেন্ট অনুযায়ী টেমপ্লেট এবং প্যারামিটার সেটআপ (মেটার টেমপ্লেটের ভেরিয়েবল সিরিয়াল অনুযায়ী)
   switch (event) {
     case 'document_pending':
       templateName = docTemplate;
+      // {{1}} নাম
       params = [entry.client];
       break;
+
     case 'work_started':
       templateName = startedTemplate;
-      // {{1}} নাম, {{2}} মোট চুক্তি, {{3}} অগ্রিম, {{4}} বাকি
-      params = [entry.client, entry.deal, entry.advance, due];
+      // {{1}} নাম, {{2}} মোট ডিল, {{3}} অগ্রিম, {{4}} বাকি, {{5}} সার্ভিসের নাম
+      params = [entry.client, entry.deal, entry.advance, due, entry.service];
       break;
+
     case 'payment_received':
       templateName = paymentTemplate;
-      // {{1}} নাম, {{2}} পেমেন্ট পরিমাণ, {{3}} বাকি
-      params = [entry.client, paymentAmount ?? 0, due];
+      // {{1}} নাম, {{2}} পেমেন্ট পরিমাণ, {{3}} বাকি, {{4}} সার্ভিসের নাম
+      params = [entry.client, paymentAmount ?? 0, due, entry.service];
       break;
+
     case 'work_finished':
       templateName = finishedTemplate;
-      // {{1}} নাম, {{2}} মোট চুক্তি, {{3}} বাকি
-      params = [entry.client, entry.deal, due];
+      // {{1}} নাম, {{2}} মোট ডিল, {{3}} ফাইনাল বাকি, {{4}} সার্ভিসের নাম
+      params = [entry.client, entry.deal, due, entry.service];
       break;
+
     case 'completed':
       templateName = completedTemplate;
-      params = [entry.client];
+      // {{1}} নাম, {{2}} সার্ভিসের নাম
+      params = [entry.client, entry.service];
       break;
+
     default:
       console.warn('[whatsapp] unknown event type');
       return;

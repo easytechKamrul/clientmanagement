@@ -1,25 +1,28 @@
 import type { IEntry } from '../models/Entry';
+import { connectDB } from './db';
+import Notification from '../models/Notification';
 
 // নতুন ৫টি ইভেন্ট বা স্ট্যাটাস অনুযায়ী সাজানো
 type EventName = 'document_pending' | 'work_started' | 'payment_received' | 'work_finished' | 'completed';
+
 function normalizePhone(raw: string): string {
   const d = (raw || '').replace(/[^0-9]/g, '');
   if (!d) return '';
   if (d.startsWith('00')) return d.slice(2);
-  
-  // যদি নাম্বারটি 880 দিয়ে শুরু হয় এবং মোট ১৩ ডিজিট হয়
+
+  // যদি নাম্বারটি 880 দিয়ে শুরু হয় এবং মোট ১৩ ডিজিট হয়
   if (d.startsWith('880') && d.length === 13) return d;
-  
-  // যদি নাম্বারটি 01 দিয়ে শুরু হয় এবং ১১ ডিজিটের হয় (বাংলাদেশের মোবাইল নম্বর) -> 88 যোগ হবে
+
+  // যদি নাম্বারটি 01 দিয়ে শুরু হয় এবং ১১ ডিজিটের হয় (বাংলাদেশের মোবাইল নম্বর) -> 88 যোগ হবে
   if (d.startsWith('01') && d.length === 11) return `88${d}`;
-  
-  // যদি শুধু 1 দিয়ে শুরু হয় এবং ১০ ডিজিট হয় -> 880 যোগ হবে
+
+  // যদি শুধু 1 দিয়ে শুরু হয় এবং ১০ ডিজিট হয় -> 880 যোগ হবে
   if (d.length === 10 && d.startsWith('1')) return `880${d}`;
-  
-  // ইউকে (UK) বা অন্য দেশের জন্য আগের নিয়ম
+
+  // ইউকে (UK) বা অন্য দেশের জন্য আগের নিয়ম
   if (d.startsWith('44') && d.length === 12) return d;
   if (d.startsWith('0') && d.length === 11) return `44${d.slice(1)}`;
-  
+
   return d;
 }
 
@@ -27,6 +30,25 @@ const text = (value: unknown) => {
   const s = String(value ?? '').replace(/\s+/g, ' ').trim();
   return s || '-';
 };
+
+// notification log ডাটাবেজে সেভ করে; এটা fail করলেও main flow যেন না ভাঙে তাই try/catch
+async function logNotification(data: {
+  entryId?: string;
+  client: string;
+  phone: string;
+  event: string;
+  templateName: string;
+  status: 'sent' | 'failed';
+  message?: string;
+  amount?: number;
+}) {
+  try {
+    await connectDB();
+    await Notification.create(data);
+  } catch (error) {
+    console.error('[whatsapp] failed to write notification log', error);
+  }
+}
 
 export async function sendWhatsAppNotification(entry: IEntry, event: EventName, paymentAmount?: number) {
   const token = process.env.WHATSAPP_ACCESS_TOKEN;
@@ -46,7 +68,7 @@ export async function sendWhatsAppNotification(entry: IEntry, event: EventName, 
   let templateName: string | undefined;
   let params: unknown[] = [];
 
-  // ইভেন্ট অনুযায়ী টেমপ্লেট এবং প্যারামিটার সেটআপ (মেটার টেমপ্লেটের ভেরিয়েবল সিরিয়াল অনুযায়ী)
+  // ইভেন্ট অনুযায়ী টেমপ্লেট এবং প্যারামিটার সেটআপ (মেটার টেমপ্লেটের ভেরিয়েবল সিরিয়াল অনুযায়ী)
   switch (event) {
     case 'document_pending':
       templateName = docTemplate;
@@ -83,8 +105,15 @@ export async function sendWhatsAppNotification(entry: IEntry, event: EventName, 
       return;
   }
 
+  const entryId = (entry as unknown as { _id?: { toString(): string } })._id?.toString();
+
   if (!token || !phoneNumberId || !templateName || !to) {
-    console.warn('[whatsapp] skipped: missing env or phone number or template');
+    const reason = !to ? 'invalid or missing phone number' : !templateName ? 'template name not set in env' : 'missing WhatsApp env variables';
+    console.warn(`[whatsapp] skipped (${event}): ${reason}`);
+    await logNotification({
+      entryId, client: entry.client, phone: entry.phone || '', event, templateName: templateName || '(unset)',
+      status: 'failed', message: `Skipped: ${reason}`, amount: paymentAmount,
+    });
     return;
   }
 
@@ -110,10 +139,27 @@ export async function sendWhatsAppNotification(entry: IEntry, event: EventName, 
         body: JSON.stringify(payload),
       }
     );
-    if (!response.ok) console.error(`[whatsapp] ${event} failed: ${await response.text()}`);
-    else console.info(`[whatsapp] ${event} sent successfully to ${to}`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`[whatsapp] ${event} failed: ${errorText}`);
+      await logNotification({
+        entryId, client: entry.client, phone: to, event, templateName,
+        status: 'failed', message: errorText.slice(0, 500), amount: paymentAmount,
+      });
+    } else {
+      console.info(`[whatsapp] ${event} sent successfully to ${to}`);
+      await logNotification({
+        entryId, client: entry.client, phone: to, event, templateName,
+        status: 'sent', amount: paymentAmount,
+      });
+    }
   } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
     console.error('[whatsapp] request failed', error);
+    await logNotification({
+      entryId, client: entry.client, phone: to, event, templateName,
+      status: 'failed', message, amount: paymentAmount,
+    });
   }
 }
 
@@ -126,12 +172,17 @@ export async function sendWhatsAppStatusNotification(entry: IEntry) {
     case 'Progress':
       event = 'work_started';
       break;
+    case 'Due Later':
+      // কাজ শেষ, কিন্তু টাকা বাকি -> work_finished_waiting template
+      event = 'work_finished';
+      break;
     case 'Complete': {
       const totalPaid = entry.advance + entry.payments.reduce((sum, payment) => sum + payment.amount, 0);
       event = entry.deal > totalPaid ? 'work_finished' : 'completed';
       break;
     }
     default:
+      console.warn(`[whatsapp] no notification mapped for status: ${entry.status}`);
       return;
   }
   await sendWhatsAppNotification(entry, event);

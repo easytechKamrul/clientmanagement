@@ -285,6 +285,9 @@ export default function DashboardApp({ view }: Props) {
           <Link className={view === "ledger" ? "active" : ""} href="/ledger" onClick={() => setMenuOpen(false)}>
             All entries
           </Link>
+          <Link href="/notifications" onClick={() => setMenuOpen(false)}>
+            Notifications
+          </Link>
         </nav>
         {view === "ledger" && <><p className="nav-label">Filter by status</p>
           {["all", ...STATUSES].map((status) => (
@@ -348,12 +351,38 @@ export default function DashboardApp({ view }: Props) {
                 : `${entries.length} entries on the book`}
             </p>
           </div>
-          <button
-            className="primary responsive-add-header"
-            onClick={openAdd}
+          <div
+            style={{
+              display: "flex",
+              gap: "10px",
+              alignItems: "center",
+              flexWrap: "wrap",
+            }}
           >
-            + Add entry
-          </button>
+            <Link
+              href="/notifications"
+              className="secondary"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                padding: "10px 16px",
+                borderRadius: "10px",
+                border: "1px solid rgba(0,0,0,0.15)",
+                fontWeight: 600,
+                textDecoration: "none",
+                color: "inherit",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Notifications
+            </Link>
+            <button
+              className="primary responsive-add-header"
+              onClick={openAdd}
+            >
+              + Add entry
+            </button>
+          </div>
         </header>
         {error && (
           <div className="error banner">

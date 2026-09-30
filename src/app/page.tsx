@@ -374,17 +374,7 @@ export default function Home() {
             </a>
           </div>
 
-          <div className={styles.footerAddress}>
-            <span>OUR LOCATION</span>
-
-            <p>
-              62 Raffles Road,
-              <br />
-              Birkenhead,
-              <br />
-              CH42 0HN, UK
-            </p>
-          </div>
+          
         </div>
 
         <div className={styles.footerBottom}>

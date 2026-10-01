@@ -294,7 +294,7 @@ export default function Home() {
           </h2>
 
           <p>
-            EASYTECH LONDON LTD (Company No: 17165157, formerly UK Bangla Creation Ltd) is an Information Technology Company
+            EASYTECH LONDON LTD is an Information Technology Company
             focused on making essential services easier to access.
           </p>
 

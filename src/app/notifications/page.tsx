@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import useSWR from "swr";
 import { onAuthStateChanged, signOut } from "firebase/auth";
+import { FaBars, FaTimes } from "react-icons/fa";
 import { firebaseAuth, allowedAdminEmail } from "@/lib/firebase-client";
 import { api } from "@/lib/client-api";
 import { money } from "@/lib/money";
@@ -62,6 +63,7 @@ function StatusBadge({ status }: { status: NotificationStatus }) {
 
 export default function NotificationsPage() {
   const [authorized, setAuthorized] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const {
     data: cached,
     error,
@@ -132,17 +134,31 @@ export default function NotificationsPage() {
 
   return (
     <div className="app-shell">
-      <aside className="sidebar">
+      {menuOpen && (
+        <button
+          className="sidebar-scrim"
+          aria-label="Close navigation menu"
+          onClick={() => setMenuOpen(false)}
+        />
+      )}
+      <aside className={`sidebar${menuOpen ? " sidebar-open" : ""}`} id="app-sidebar">
         <div className="brand">
           <div>
             <b>EASY TECH LONDON LTD</b>
             <small>Client & payment ledger</small>
           </div>
+          <button
+            className="mobile-sidebar-close"
+            aria-label="Close navigation menu"
+            onClick={() => setMenuOpen(false)}
+          >
+            <FaTimes />
+          </button>
         </div>
         <nav>
-          <Link href="/dashboard">Dashboard</Link>
-          <Link href="/ledger">All entries</Link>
-          <Link className="active" href="/notifications">
+          <Link href="/dashboard" onClick={() => setMenuOpen(false)}>Dashboard</Link>
+          <Link href="/ledger" onClick={() => setMenuOpen(false)}>All entries</Link>
+          <Link className="active" href="/notifications" onClick={() => setMenuOpen(false)}>
             Notifications
           </Link>
         </nav>
@@ -153,6 +169,18 @@ export default function NotificationsPage() {
         </div>
       </aside>
       <main className="content">
+        <div className="mobile-topbar">
+          <button
+            className="menu-toggle"
+            aria-label="Open navigation menu"
+            aria-expanded={menuOpen}
+            aria-controls="app-sidebar"
+            onClick={() => setMenuOpen(true)}
+          >
+            <FaBars />
+          </button>
+          <strong>EASY TECH LONDON LTD</strong>
+        </div>
         <header>
           <div>
             <p className="eyebrow">EASY TECH LONDON LTD / NOTIFICATIONS</p>
@@ -233,6 +261,36 @@ export default function NotificationsPage() {
                 ))}
               </tbody>
             </table>
+            <div className="mobile-notification-list">
+              {pageItems.map((item) => (
+                <article className="mobile-notification" key={item._id}>
+                  <div className="mobile-notification-heading">
+                    <b>{item.client}</b>
+                    <StatusBadge status={item.status} />
+                  </div>
+                  <dl className="mobile-notification-meta">
+                    <div>
+                      <dt>Date & time</dt>
+                      <dd>{formatDateTime(item.createdAt)}</dd>
+                    </div>
+                    <div>
+                      <dt>Phone</dt>
+                      <dd>{item.phone}</dd>
+                    </div>
+                    <div>
+                      <dt>Event</dt>
+                      <dd>{EVENT_LABELS[item.event] || item.event}</dd>
+                    </div>
+                  </dl>
+                  <div className="mobile-notification-actions">
+                    <button onClick={() => setSelected(item)}>Details</button>
+                    <button className="danger" onClick={() => removeOne(item._id)}>
+                      Delete
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
             {!filtered.length && <p className="empty">No notifications match this search.</p>}
             <div className="pagination">
               <span>

@@ -354,7 +354,7 @@ export default function Home() {
             </a>
 
             <p>
-              Your one-stop service &amp; support partner in the UK. (Company No: 17165157)
+              Your one-stop service &amp; support partner in the UK.
             </p>
           </div>
 
@@ -363,7 +363,7 @@ export default function Home() {
 
             <a href="mailto:EASYTECHsolutionuk@gmail.com" className={styles.contactItem}>
               <FaEnvelope className={styles.emailIcon} />
-              <span>EASYTECHsolutionuk@gmail.com</span>
+              <span>easytechsolutionuk@gmail.com</span>
               <b>↗</b>
             </a>
 
@@ -382,7 +382,7 @@ export default function Home() {
             © {new Date().getFullYear()} EASYTECH LONDON LTD. All rights reserved.
           </span>
 
-          <span>Company No: 17165157</span>
+        
 
           <Link href="/admin/login">
             Admin Login ↗

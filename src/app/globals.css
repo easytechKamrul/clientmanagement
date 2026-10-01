@@ -49,6 +49,7 @@ button { cursor: pointer; }
 .sidebar-scrim, .mobile-topbar { display: none; }
 .mobile-sidebar-close { display: none; }
 .mobile-entry-list { display: none; }
+.mobile-notification-list { display: none; }
 .toolbar-filters { display: contents; }
 .add-entry-stat { display: none; }
 @media (max-width: 800px) {
@@ -78,6 +79,17 @@ button { cursor: pointer; }
   .content .table-wrap { overflow: visible; padding: 12px; }
   .table-wrap > table { display: none; }
   .mobile-entry-list { display: grid; gap: 10px; }
+  .mobile-notification-list { display: grid; gap: 10px; }
+  .mobile-notification { display: grid; gap: 12px; min-width: 0; padding: 14px; background: var(--background); border: 1px solid var(--line); border-radius: 8px; }
+  .mobile-notification-heading { display: flex; align-items: start; justify-content: space-between; gap: 10px; }
+  .mobile-notification-heading b { overflow-wrap: anywhere; }
+  .mobile-notification-meta { display: grid; gap: 10px; margin: 0; }
+  .mobile-notification-meta div { display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 10px; }
+  .mobile-notification-meta dt { color: var(--muted); font-size: 11px; }
+  .mobile-notification-meta dd { min-width: 0; margin: 0; overflow-wrap: anywhere; font-size: 12px; }
+  .mobile-notification-actions { display: flex; gap: 8px; }
+  .mobile-notification-actions button { border: 1px solid var(--line); border-radius: 7px; padding: 8px 10px; background: var(--paper); color: var(--foreground); font-size: 12px; font-weight: 750; }
+  .mobile-notification-actions .danger { border: 0; background: #b34b4812; color: var(--red); }
   .mobile-entry { display: grid; gap: 12px; padding: 14px; background: var(--background); border: 1px solid var(--line); border-radius: 8px; }
   .mobile-entry-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .mobile-entry-heading h3 { margin: 0; overflow-wrap: anywhere; font-size: 15px; }
@@ -114,6 +126,7 @@ button { cursor: pointer; }
   .content .table-wrap { overflow: visible; padding: 10px; }
   .table-wrap > table { display: none; }
   .mobile-entry-list { display: grid; gap: 10px; }
+  .mobile-notification-list { display: grid; gap: 10px; }
   .mobile-entry { display: grid; gap: 12px; padding: 14px; background: var(--background); border: 1px solid var(--line); border-radius: 8px; }
   .mobile-entry-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .mobile-entry-heading h3 { margin: 0; overflow-wrap: anywhere; font-size: 15px; }

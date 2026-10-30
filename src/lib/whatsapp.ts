@@ -1,25 +1,24 @@
-import type { IEntry } from '../models/Entry';
+import { IEntry } from '../models/Entry';
 import { connectDB } from './db';
 import Notification from '../models/Notification';
 
-// নতুন ৫টি ইভেন্ট বা স্ট্যাটাস অনুযায়ী সাজানো
-type EventName = 'document_pending' | 'work_started' | 'payment_received' | 'work_finished' | 'completed';
+// নতুন ইভেন্ট টাইপগুলো সহ
+type EventName = 
+  | 'document_pending' 
+  | 'work_started' 
+  | 'payment_received' 
+  | 'work_finished' 
+  | 'completed';
 
 function normalizePhone(raw: string): string {
   const d = (raw || '').replace(/[^0-9]/g, '');
   if (!d) return '';
   if (d.startsWith('00')) return d.slice(2);
 
-  // যদি নাম্বারটি 880 দিয়ে শুরু হয় এবং মোট ১৩ ডিজিট হয়
   if (d.startsWith('880') && d.length === 13) return d;
-
-  // যদি নাম্বারটি 01 দিয়ে শুরু হয় এবং ১১ ডিজিটের হয় (বাংলাদেশের মোবাইল নম্বর) -> 88 যোগ হবে
   if (d.startsWith('01') && d.length === 11) return `88${d}`;
-
-  // যদি শুধু 1 দিয়ে শুরু হয় এবং ১০ ডিজিট হয় -> 880 যোগ হবে
   if (d.length === 10 && d.startsWith('1')) return `880${d}`;
 
-  // ইউকে (UK) বা অন্য দেশের জন্য আগের নিয়ম
   if (d.startsWith('44') && d.length === 12) return d;
   if (d.startsWith('0') && d.length === 11) return `44${d.slice(1)}`;
 
@@ -31,7 +30,6 @@ const text = (value: unknown) => {
   return s || '-';
 };
 
-// notification log ডাটাবেজে সেভ করে; এটা fail করলেও main flow যেন না ভাঙে তাই try/catch
 async function logNotification(data: {
   entryId?: string;
   client: string;
@@ -53,14 +51,16 @@ async function logNotification(data: {
 export async function sendWhatsAppNotification(entry: IEntry, event: EventName, paymentAmount?: number) {
   const token = process.env.WHATSAPP_ACCESS_TOKEN;
   const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
-  const to = normalizePhone(entry.phone || '');
 
-  // পরিবেশ ভেরিয়েবল থেকে ৫টি টেমপ্লেট নেম নেওয়া
-  const docTemplate = process.env.WHATSAPP_TEMPLATE_DOC;                 // 1. Document checklist
-  const startedTemplate = process.env.WHATSAPP_TEMPLATE_STARTED;       // 2. Work started
-  const paymentTemplate = process.env.WHATSAPP_TEMPLATE_PAYMENT;     // 3. Payment received
-  const finishedTemplate = process.env.WHATSAPP_TEMPLATE_FINISHED;   // 4. Work finished/waiting
-  const completedTemplate = process.env.WHATSAPP_TEMPLATE_COMPLETED; // 5. Project completed
+  const rawTargetPhone = entry.phone;
+  const to = normalizePhone(rawTargetPhone || '');
+
+  // এনভায়রনমেন্ট ভেরিয়েবল থেকে টেমপ্লেট নেমগুলো নেওয়া
+  const docTemplate = process.env.WHATSAPP_TEMPLATE_DOC;
+  const startedTemplate = process.env.WHATSAPP_TEMPLATE_STARTED;
+  const paymentTemplate = process.env.WHATSAPP_TEMPLATE_PAYMENT;
+  const finishedTemplate = process.env.WHATSAPP_TEMPLATE_FINISHED;
+  const completedTemplate = process.env.WHATSAPP_TEMPLATE_COMPLETED;
 
   const totalPaid = entry.advance + entry.payments.reduce((sum, p) => sum + p.amount, 0);
   const due = Math.max(0, entry.deal - totalPaid);
@@ -68,35 +68,29 @@ export async function sendWhatsAppNotification(entry: IEntry, event: EventName, 
   let templateName: string | undefined;
   let params: unknown[] = [];
 
-  // ইভেন্ট অনুযায়ী টেমপ্লেট এবং প্যারামিটার সেটআপ (মেটার টেমপ্লেটের ভেরিয়েবল সিরিয়াল অনুযায়ী)
   switch (event) {
     case 'document_pending':
       templateName = docTemplate;
-      // {{1}} নাম
       params = [entry.client];
       break;
 
     case 'work_started':
       templateName = startedTemplate;
-      // {{1}} নাম, {{2}} মোট ডিল, {{3}} অগ্রিম, {{4}} বাকি, {{5}} সার্ভিসের নাম
       params = [entry.client, entry.deal, entry.advance, due, entry.service];
       break;
 
     case 'payment_received':
       templateName = paymentTemplate;
-      // {{1}} নাম, {{2}} পেমেন্ট পরিমাণ, {{3}} বাকি, {{4}} সার্ভিসের নাম
       params = [entry.client, paymentAmount ?? 0, due, entry.service];
       break;
 
     case 'work_finished':
       templateName = finishedTemplate;
-      // {{1}} নাম, {{2}} মোট ডিল, {{3}} ফাইনাল বাকি, {{4}} সার্ভিসের নাম
       params = [entry.client, entry.deal, due, entry.service];
       break;
 
     case 'completed':
       templateName = completedTemplate;
-      // {{1}} নাম, {{2}} সার্ভিসের নাম
       params = [entry.client, entry.service];
       break;
 
@@ -111,7 +105,7 @@ export async function sendWhatsAppNotification(entry: IEntry, event: EventName, 
     const reason = !to ? 'invalid or missing phone number' : !templateName ? 'template name not set in env' : 'missing WhatsApp env variables';
     console.warn(`[whatsapp] skipped (${event}): ${reason}`);
     await logNotification({
-      entryId, client: entry.client, phone: entry.phone || '', event, templateName: templateName || '(unset)',
+      entryId, client: entry.client, phone: rawTargetPhone || '', event, templateName: templateName || '(unset)',
       status: 'failed', message: `Skipped: ${reason}`, amount: paymentAmount,
     });
     return;
@@ -123,7 +117,7 @@ export async function sendWhatsAppNotification(entry: IEntry, event: EventName, 
     type: 'template',
     template: {
       name: templateName,
-      language: { code: process.env.WHATSAPP_TEMPLATE_LANGUAGE || 'en_US' },
+      language: { code: process.env.WHATSAPP_TEMPLATE_LANGUAGE || 'en' },
       components: [
         { type: 'body', parameters: params.map((value) => ({ type: 'text', text: text(value) })) },
       ],
@@ -164,26 +158,29 @@ export async function sendWhatsAppNotification(entry: IEntry, event: EventName, 
 }
 
 export async function sendWhatsAppStatusNotification(entry: IEntry) {
-  let event: EventName;
+  let clientEvent: EventName;
+  
   switch (entry.status) {
     case 'Pending':
-      event = 'document_pending';
+      clientEvent = 'document_pending';
       break;
     case 'Progress':
-      event = 'work_started';
+      clientEvent = 'work_started';
       break;
     case 'Due Later':
-      // কাজ শেষ, কিন্তু টাকা বাকি -> work_finished_waiting template
-      event = 'work_finished';
+      clientEvent = 'work_finished';
       break;
     case 'Complete': {
       const totalPaid = entry.advance + entry.payments.reduce((sum, payment) => sum + payment.amount, 0);
-      event = entry.deal > totalPaid ? 'work_finished' : 'completed';
+      clientEvent = entry.deal > totalPaid ? 'work_finished' : 'completed';
       break;
     }
     default:
       console.warn(`[whatsapp] no notification mapped for status: ${entry.status}`);
       return;
   }
-  await sendWhatsAppNotification(entry, event);
+
+  // ১. প্রথমে ক্লায়েন্টকে নোটিফিকেশন পাঠানো
+  await sendWhatsAppNotification(entry, clientEvent);
+
 }

@@ -1,7 +1,12 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from './home.module.css';
-import { FaEnvelope, FaWhatsapp } from 'react-icons/fa';
+import {
+  FaEnvelope,
+  FaFacebookF,
+  FaInstagram,
+  FaWhatsapp,
+} from 'react-icons/fa';
 
 const serviceGroups = [
   {
@@ -372,6 +377,18 @@ export default function Home() {
               <span>+44 7514 585898</span>
               <b>↗</b>
             </a>
+
+            <a href="https://www.instagram.com/easytechlondon.ltd/?hl=en" target="_blank" rel="noopener noreferrer" className={styles.contactItem} aria-label="Visit EASYTECH on Instagram">
+              <FaInstagram className={styles.instagramIcon} />
+              <span>Instagram</span>
+              <b>↗</b>
+            </a>
+
+            <a href="https://www.facebook.com/profile.php?id=61594847097764" target="_blank" rel="noopener noreferrer" className={styles.contactItem} aria-label="Visit EASYTECH on Facebook">
+              <FaFacebookF className={styles.facebookIcon} />
+              <span>Facebook</span>
+              <b>↗</b>
+            </a>
           </div>
 
           
@@ -389,6 +406,16 @@ export default function Home() {
           </Link>
         </div>
       </footer>
+
+      <a
+        href="https://wa.me/447514585898"
+        target="_blank"
+        rel="noopener noreferrer"
+        className={styles.floatingWhatsApp}
+        aria-label="Chat with EASYTECH on WhatsApp"
+      >
+        <FaWhatsapp />
+      </a>
     </main>
   );
 }

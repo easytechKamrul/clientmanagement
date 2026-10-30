@@ -1,6 +1,8 @@
 import type { Entry } from '@/types';
 export const n = (value: unknown) => Number(value) || 0;
 export const received = (entry: Pick<Entry, 'advance' | 'payments'>) => n(entry.advance) + (entry.payments || []).reduce((sum, payment) => sum + n(payment.amount), 0);
+export const refunded = (entry: Pick<Entry, 'refunds'>) => (entry.refunds || []).reduce((sum, refund) => sum + n(refund.amount), 0);
+export const retained = (entry: Pick<Entry, 'advance' | 'payments' | 'refunds'>) => received(entry) - refunded(entry);
 export const remaining = (entry: Pick<Entry, 'deal' | 'advance' | 'payments'>) => Math.max(0, n(entry.deal) - received(entry));
 export const isPaidInFull = (entry: Pick<Entry, 'deal' | 'advance' | 'payments'>) => n(entry.deal) > 0 && received(entry) >= n(entry.deal);
 export const money = (value: unknown) => `£${n(value).toLocaleString('en-GB')}`;

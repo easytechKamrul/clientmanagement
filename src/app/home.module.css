@@ -1391,3 +1391,41 @@
   color: #25D366;
   font-size: 18px;
 }
+
+.instagramIcon {
+  color: #e1306c;
+  font-size: 18px;
+}
+
+.facebookIcon {
+  color: #1877f2;
+  font-size: 18px;
+}
+
+.floatingWhatsApp {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 20;
+  display: grid;
+  width: 58px;
+  height: 58px;
+  place-items: center;
+  border-radius: 50%;
+  background: #25d366;
+  color: #fff;
+  font-size: 30px;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.25);
+  text-decoration: none;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.floatingWhatsApp:hover {
+  transform: translateY(-3px);
+  background: #1fb858;
+}
+
+.floatingWhatsApp:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}

@@ -18,6 +18,7 @@ import {
   n,
   prettyDate,
   received,
+  retained,
   remaining,
   today,
 } from "@/lib/money";
@@ -72,10 +73,15 @@ function activeDate(entry: Entry) {
       label: "Additional payment",
       priority: 1,
     })),
+    ...(entry.refunds || []).map((refund) => ({
+      date: refund.date,
+      label: "Refund",
+      priority: 2,
+    })),
     ...(entry.updateHistory || []).map((update) => ({
       date: update.date,
       label: update.description,
-      priority: 2,
+      priority: 3,
     })),
   ];
   return dates.reduce((latest, current) =>
@@ -118,7 +124,7 @@ export default function DashboardApp({ view }: Props) {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("date-desc");
   const [dashboardMonth, setDashboardMonth] = useState("all");
-  const [modal, setModal] = useState<"add" | "edit" | "details" | "pay" | null>(
+  const [modal, setModal] = useState<"add" | "edit" | "details" | "pay" | "refund" | null>(
     null,
   );
   const [selected, setSelected] = useState<Entry | null>(null);
@@ -174,7 +180,7 @@ export default function DashboardApp({ view }: Props) {
   );
   const totals = {
     deal: active.reduce((sum, entry) => sum + entry.deal, 0),
-    received: active.reduce((sum, entry) => sum + received(entry), 0),
+    received: entries.reduce((sum, entry) => sum + retained(entry), 0),
     due: dueEntries.reduce((sum, entry) => sum + remaining(entry), 0),
     complete: active.filter((entry) => entry.status === "Complete").length,
   };
@@ -247,6 +253,20 @@ export default function DashboardApp({ view }: Props) {
       { revalidate: false },
     );
     setModal(null);
+  };
+  const refund = async (amount: number, date: string) => {
+    if (!selected) return;
+    const result = await api<Entry>(`/entries/${selected._id}/refunds`, {
+      method: "POST",
+      body: JSON.stringify({ amount, date }),
+    });
+    await mutateEntries(
+      (current = []) =>
+        current.map((entry) => (entry._id === result._id ? result : entry)),
+      { revalidate: false },
+    );
+    setSelected(result);
+    setModal("details");
   };
 
   if (!authorized || loading) return <LedgerLoading view={view} />;
@@ -439,11 +459,15 @@ export default function DashboardApp({ view }: Props) {
           onClose={() => setModal(null)}
           onEdit={() => openEdit(selected)}
           onPay={() => setModal("pay")}
+          onRefund={() => setModal("refund")}
           onStart={() => start(selected)}
         />
       ) : null}
       {modal === "pay" && selected ? (
         <Payment entry={selected} onClose={() => setModal(null)} onSave={pay} />
+      ) : null}
+      {modal === "refund" && selected ? (
+        <RefundDialog entry={selected} onClose={() => setModal("details")} onSave={refund} />
       ) : null}
     </div>
   );
@@ -463,6 +487,7 @@ function Overview({
   onPay: (entry: Entry) => void;
 }) {
   const [statusFilter, setStatusFilter] = useState("all");
+  const [showMonthlyDetails, setShowMonthlyDetails] = useState(true);
   useEffect(() => {
     const handleFilter = (event: Event) => setStatusFilter((event as CustomEvent<string>).detail);
     window.addEventListener("dashboard-filter", handleFilter);
@@ -478,6 +503,7 @@ function Overview({
         .flatMap((entry) => [
           entry.date,
           ...entry.payments.map((payment) => payment.date),
+          ...(entry.refunds || []).map((refund) => refund.date),
         ])
         .map(monthKey)
         .filter(Boolean),
@@ -500,9 +526,7 @@ function Overview({
     (sum, entry) => sum + n(entry.commission),
     0,
   );
-  const receivedInMonth = filteredEntries
-    .filter((entry) => !["Pending", "Cancelled"].includes(entry.status))
-    .reduce(
+  const receivedInMonth = filteredEntries.reduce(
       (sum, entry) =>
         sum +
         (month === "all" || monthKey(entry.date) === month
@@ -518,12 +542,55 @@ function Overview({
         ),
       0,
     );
-  const netBalance = receivedInMonth - commission;
+  const refundsInMonth = filteredEntries.reduce(
+      (sum, entry) =>
+        sum + (entry.refunds || [])
+          .filter((refund) => month === "all" || monthKey(refund.date) === month)
+          .reduce((refundSum, refund) => refundSum + n(refund.amount), 0),
+      0,
+    );
+  const netReceivedInMonth = receivedInMonth - refundsInMonth;
+  const netBalance = netReceivedInMonth - commission;
   const due = dueEntries.reduce((sum, entry) => sum + remaining(entry), 0);
   const owing = dueEntries
     .filter((entry) => remaining(entry) > 0)
     .sort((a, b) => remaining(b) - remaining(a))
     .slice(0, 6);
+  const monthlyPayments = filteredEntries
+    .flatMap((entry) => [
+      ...(month === "all" || monthKey(entry.date) === month
+        ? [{
+            key: `${entry._id}-advance`,
+            date: entry.date,
+            client: entry.client,
+            service: entry.service,
+            type: "Advance",
+            amount: n(entry.advance),
+          }]
+        : []),
+      ...entry.payments
+        .filter((payment) => month === "all" || monthKey(payment.date) === month)
+        .map((payment, index) => ({
+          key: `${entry._id}-payment-${payment.date}-${index}`,
+          date: payment.date,
+          client: entry.client,
+          service: entry.service,
+          type: "Later payment",
+          amount: n(payment.amount),
+        })),
+      ...(entry.refunds || [])
+        .filter((refund) => month === "all" || monthKey(refund.date) === month)
+        .map((refund, index) => ({
+          key: `${entry._id}-refund-${refund.date}-${index}`,
+          date: refund.date,
+          client: entry.client,
+          service: entry.service,
+          type: "Refund",
+          amount: -n(refund.amount),
+        })),
+    ])
+    .filter((payment) => payment.amount !== 0)
+    .sort((a, b) => b.date.localeCompare(a.date));
   const byMonth = monthKeys
     .map((key) => {
       const monthEntries = filteredEntries.filter(
@@ -541,7 +608,10 @@ function Overview({
           (monthKey(entry.date) === key ? n(entry.advance) : 0) +
           entry.payments
             .filter((payment) => monthKey(payment.date) === key)
-            .reduce((paymentSum, payment) => paymentSum + n(payment.amount), 0),
+            .reduce((paymentSum, payment) => paymentSum + n(payment.amount), 0) -
+          (entry.refunds || [])
+            .filter((refund) => monthKey(refund.date) === key)
+            .reduce((refundSum, refund) => refundSum + n(refund.amount), 0),
         0,
       );
       const monthDeal = monthEntries.reduce(
@@ -555,17 +625,6 @@ function Overview({
     })
     .slice(0, 6);
   const peak = Math.max(1, ...byMonth.map((item) => item.jobs));
-  useEffect(() => {
-    const summary = document.querySelector<HTMLElement>(".money-summary");
-    if (!summary) return;
-    let row = summary.querySelector<HTMLElement>("[data-net-balance]");
-    if (!row) {
-      row = document.createElement("div");
-      row.dataset.netBalance = "true";
-      summary.appendChild(row);
-    }
-    row.innerHTML = `<dt>Net balance</dt><dd class="${netBalance >= 0 ? "green-text" : "red-text"}">${money(netBalance)}</dd>`;
-  }, [netBalance]);
   return (
     <section className="stack">
       <div className="month-filter">
@@ -590,9 +649,9 @@ function Overview({
           <small>{active.length} active jobs</small>
         </article>
         <article className="green">
-          <span>Total received</span>
-          <strong>{money(receivedInMonth)}</strong>
-          <small>Advance + later payments</small>
+          <span>Net received</span>
+          <strong>{money(netReceivedInMonth)}</strong>
+          <small>Gross {money(receivedInMonth)} · Refunds − {money(refundsInMonth)}</small>
         </article>
         <article className="red">
           <span>Remaining due</span>
@@ -620,8 +679,16 @@ function Overview({
               <dd>{money(deal)}</dd>
             </div>
             <div>
-              <dt>Received</dt>
+              <dt>Gross received</dt>
               <dd className="green-text">{money(receivedInMonth)}</dd>
+            </div>
+            <div>
+              <dt>Refunds</dt>
+              <dd className="red-text">− {money(refundsInMonth)}</dd>
+            </div>
+            <div>
+              <dt>Net received</dt>
+              <dd className="green-text">{money(netReceivedInMonth)}</dd>
             </div>
             <div>
               <dt>Agent commission</dt>
@@ -630,6 +697,10 @@ function Overview({
             <div>
               <dt>Due to collect</dt>
               <dd className="red-text">{money(due)}</dd>
+            </div>
+            <div>
+              <dt>Net balance</dt>
+              <dd className={netBalance >= 0 ? "green-text" : "red-text"}>{money(netBalance)}</dd>
             </div>
           </dl>
         </section>
@@ -650,7 +721,7 @@ function Overview({
                     <b>{monthName(item.key)}</b>
                     <span>
                       {item.done}/{item.jobs} done · {money(item.collected)}{" "}
-                      received
+                      net received
                     </span>
                   </div>
                   <div className="month-bar">
@@ -681,6 +752,80 @@ function Overview({
           </div>
         </section>
       </div>
+      <label className="monthly-details-toggle">
+        <input
+          type="checkbox"
+          checked={showMonthlyDetails}
+          onChange={(event) => setShowMonthlyDetails(event.target.checked)}
+        />
+        Show monthly details
+      </label>
+      {showMonthlyDetails && <section className="panel monthly-details">
+        <div className="panel-heading">
+          <div>
+            <h2>{month === "all" ? "All monthly details" : `${monthName(month)} details`}</h2>
+            <p className="muted">Work started and payments received in this period.</p>
+          </div>
+        </div>
+        <div className="monthly-detail-block">
+          <div className="monthly-detail-heading">
+            <h3>Work and balances</h3>
+            <span>{active.length} jobs · {money(deal)} deal · {money(commission)} commission</span>
+          </div>
+          {active.length ? (
+            <div className="monthly-table-wrap">
+              <table>
+                <thead>
+                  <tr><th>Date</th><th>Client / service</th><th>Status</th><th>Deal</th><th>Commission</th><th>Current due</th></tr>
+                </thead>
+                <tbody>
+                  {active.map((entry) => (
+                    <tr key={entry._id}>
+                      <td>{prettyDate(entry.date)}</td>
+                      <td><b>{entry.client}</b><small>{entry.service}</small></td>
+                      <td>{entry.status}</td>
+                      <td>{money(entry.deal)}</td>
+                      <td>{money(entry.commission)}</td>
+                      <td className={remaining(entry) ? "red-text" : "green-text"}>{money(remaining(entry))}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="empty">No active work started in this period.</p>
+          )}
+        </div>
+        <div className="monthly-detail-block">
+          <div className="monthly-detail-heading">
+            <h3>Payments and refunds</h3>
+            <span>{monthlyPayments.length} transactions · Net {money(netReceivedInMonth)}</span>
+          </div>
+          {monthlyPayments.length ? (
+            <div className="monthly-table-wrap">
+              <table>
+                <thead>
+                  <tr><th>Date</th><th>Client / service</th><th>Payment type</th><th>Amount</th></tr>
+                </thead>
+                <tbody>
+                  {monthlyPayments.map((payment) => (
+                    <tr key={payment.key}>
+                      <td>{prettyDate(payment.date)}</td>
+                      <td><b>{payment.client}</b><small>{payment.service}</small></td>
+                      <td>{payment.type}</td>
+                      <td className={payment.amount < 0 ? "red-text" : "green-text"}>
+                        {payment.amount < 0 ? "− " : ""}{money(Math.abs(payment.amount))}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="empty">No payments received in this period.</p>
+          )}
+        </div>
+      </section>}
       <section className="panel">
         <div className="panel-heading">
           <div>
@@ -767,8 +912,8 @@ function Ledger({
     (sum, entry) => sum + n(entry.deal),
     0,
   );
-  const visibleReceived = activeEntries.reduce(
-    (sum, entry) => sum + received(entry),
+  const visibleReceived = entries.reduce(
+    (sum, entry) => sum + retained(entry),
     0,
   );
   const visibleDue = dueEntries.reduce(
@@ -812,9 +957,9 @@ function Ledger({
           <small>Excludes pending deals</small>
         </article>
         <article className="green received-stat">
-          <span>Total received</span>
+          <span>Net received</span>
           <strong>{money(visibleReceived)}</strong>
-          <small>Advance + later payments</small>
+          <small>After refunds</small>
         </article>
         <article className="red remaining-stat">
           <span>Remaining due</span>
@@ -1186,12 +1331,14 @@ function Details({
   onClose,
   onEdit,
   onPay,
+  onRefund,
   onStart,
 }: {
   entry: Entry;
   onClose: () => void;
   onEdit: () => void;
   onPay: () => void;
+  onRefund: () => void;
   onStart: () => void;
 }) {
   return (
@@ -1211,8 +1358,8 @@ function Details({
             <b>{money(entry.deal)}</b>
           </div>
           <div>
-            <small>Received</small>
-            <b className="green-text">{money(received(entry))}</b>
+            <small>Net received</small>
+            <b className="green-text">{money(retained(entry))}</b>
           </div>
           <div>
             <small>Remaining</small>
@@ -1237,6 +1384,12 @@ function Details({
               <dd>—</dd>
             </div>
           )}
+          {(entry.refunds || []).map((refund, index) => (
+            <div key={`refund-${refund.date}-${index}`}>
+              <dt>Refund · {prettyDate(refund.date)}</dt>
+              <dd className="red-text">− {money(refund.amount)}</dd>
+            </div>
+          ))}
           {(entry.updateHistory || []).map((update, index) => (
             <div key={`${update.date}-${index}`}>
               <dt>Update · {prettyDate(update.date)}</dt>
@@ -1272,6 +1425,9 @@ function Details({
               </button>
             )
           )}
+          <button className="danger" onClick={onRefund}>
+            Refund client
+          </button>
           <button className="primary" onClick={onEdit}>
             Edit entry
           </button>
@@ -1332,6 +1488,56 @@ function Payment({
             onClick={() => void onSave(Number(amount), date)}
           >
             Save payment
+          </button>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function RefundDialog({
+  entry,
+  onClose,
+  onSave,
+}: {
+  entry: Entry;
+  onClose: () => void;
+  onSave: (amount: number, date: string) => Promise<void>;
+}) {
+  const [amount, setAmount] = useState("");
+  const [date, setDate] = useState(today());
+  return (
+    <div className="modal-backdrop">
+      <section className="modal narrow">
+        <div className="modal-heading">
+          <div>
+            <h2>Refund client</h2>
+            <p className="muted">{entry.client} · {entry.service}</p>
+          </div>
+          <button onClick={onClose}>Close</button>
+        </div>
+        <Field
+          label="Refund date"
+          type="date"
+          value={date}
+          onChange={(event) => setDate(event.target.value)}
+        />
+        <Field
+          label="Amount refunded"
+          type="number"
+          min="0.01"
+          step="0.01"
+          value={amount}
+          onChange={(event) => setAmount(event.target.value)}
+        />
+        <div className="modal-actions">
+          <button onClick={onClose}>Cancel</button>
+          <button
+            className="danger"
+            disabled={!Number.isFinite(Number(amount)) || Number(amount) <= 0}
+            onClick={() => void onSave(Number(amount), date)}
+          >
+            Save refund
           </button>
         </div>
       </section>

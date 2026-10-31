@@ -773,6 +773,7 @@ function Overview({
             <span>{active.length} jobs · {money(deal)} deal · {money(commission)} commission</span>
           </div>
           {active.length ? (
+            <>
             <div className="monthly-table-wrap">
               <table>
                 <thead>
@@ -792,6 +793,37 @@ function Overview({
                 </tbody>
               </table>
             </div>
+            <div className="monthly-mobile-list">
+              {active.map((entry) => (
+                <article className="monthly-mobile-card" key={entry._id}>
+                  <div className="mobile-entry-heading">
+                    <h3>{entry.client}</h3>
+                    <span className="badge">{entry.status}</span>
+                  </div>
+                  <div className="monthly-mobile-meta">
+                    <span>{prettyDate(entry.date)}</span>
+                    <span>{entry.service}</span>
+                  </div>
+                  <dl className="mobile-entry-values">
+                    <div>
+                      <dt>Deal</dt>
+                      <dd>{money(entry.deal)}</dd>
+                    </div>
+                    <div>
+                      <dt>Commission</dt>
+                      <dd>{money(entry.commission)}</dd>
+                    </div>
+                    <div>
+                      <dt>Current due</dt>
+                      <dd className={remaining(entry) ? "red-text" : "green-text"}>
+                        {money(remaining(entry))}
+                      </dd>
+                    </div>
+                  </dl>
+                </article>
+              ))}
+            </div>
+            </>
           ) : (
             <p className="empty">No active work started in this period.</p>
           )}
@@ -802,6 +834,7 @@ function Overview({
             <span>{monthlyPayments.length} transactions · Net {money(netReceivedInMonth)}</span>
           </div>
           {monthlyPayments.length ? (
+            <>
             <div className="monthly-table-wrap">
               <table>
                 <thead>
@@ -821,6 +854,32 @@ function Overview({
                 </tbody>
               </table>
             </div>
+            <div className="monthly-mobile-list">
+              {monthlyPayments.map((payment) => (
+                <article className="monthly-mobile-card" key={payment.key}>
+                  <div className="mobile-entry-heading">
+                    <h3>{payment.client}</h3>
+                    <span>{prettyDate(payment.date)}</span>
+                  </div>
+                  <div className="monthly-mobile-meta">
+                    <span>{payment.service}</span>
+                  </div>
+                  <dl className="mobile-entry-values">
+                    <div>
+                      <dt>Payment type</dt>
+                      <dd>{payment.type}</dd>
+                    </div>
+                    <div>
+                      <dt>Amount</dt>
+                      <dd className={payment.amount < 0 ? "red-text" : "green-text"}>
+                        {payment.amount < 0 ? "− " : ""}{money(Math.abs(payment.amount))}
+                      </dd>
+                    </div>
+                  </dl>
+                </article>
+              ))}
+            </div>
+            </>
           ) : (
             <p className="empty">No payments received in this period.</p>
           )}

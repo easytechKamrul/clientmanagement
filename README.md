@@ -17,7 +17,7 @@ EASY TECH LONDON LTD-এর public company website এবং private admin ledge
 
 - Responsive homepage, company logo, navigation, hero, company introduction এবং contact section।
 - Services তিনটি group-এ দেখানো হয়:
-  - **Work & Driver Support:** insurance agent tasks, maternity/paternity pay, sick/accident claims, CBT support।
+  - **Work & Driver Support:** insurance agent tasks, maternity/paternity pay, sick/accident claims।
   - **Accounts & Technology:** delivery account create/recover, Just Eat zone change ও tax information, credit card assistance, Amazon/Yodel/Evri account support।
   - **Education & Travel:** university admission/student maintenance, air ticket, Hajj/Umrah, passport renewal/No Visa assistance।
 - Company owner হিসেবে Md Kamrul Islam-এর পরিচিতি ও contact CTA।

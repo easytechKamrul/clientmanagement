@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { requireAdmin } from '@/lib/api-auth';
 import Entry from '@/models/Entry';
+import { sendWhatsAppNotification } from '@/lib/whatsapp';
 
 export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
@@ -24,6 +25,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     entry.updateHistory = entry.updateHistory || [];
     entry.updateHistory.push({ date: refundDate, description: `Refund recorded: £${value}` });
     await entry.save();
+    await sendWhatsAppNotification(entry, 'refund_received', value);
     return NextResponse.json(entry.toObject());
   } catch (error) {
     const message = error instanceof Error ? error.message : '';

@@ -8,7 +8,8 @@ type EventName =
   | 'work_started' 
   | 'payment_received' 
   | 'work_finished' 
-  | 'completed';
+  | 'completed'
+  | 'refund_received';
 
 function normalizePhone(raw: string): string {
   const d = (raw || '').replace(/[^0-9]/g, '');
@@ -61,6 +62,7 @@ export async function sendWhatsAppNotification(entry: IEntry, event: EventName, 
   const paymentTemplate = process.env.WHATSAPP_TEMPLATE_PAYMENT;
   const finishedTemplate = process.env.WHATSAPP_TEMPLATE_FINISHED;
   const completedTemplate = process.env.WHATSAPP_TEMPLATE_COMPLETED;
+  const refundTemplate = process.env.WHATSAPP_TEMPLATE_REFUND || 'refund_receipt';
 
   const totalPaid = entry.advance + entry.payments.reduce((sum, p) => sum + p.amount, 0);
   const due = Math.max(0, entry.deal - totalPaid);
@@ -92,6 +94,11 @@ export async function sendWhatsAppNotification(entry: IEntry, event: EventName, 
     case 'completed':
       templateName = completedTemplate;
       params = [entry.client, entry.service];
+      break;
+
+    case 'refund_received':
+      templateName = refundTemplate;
+      params = [entry.client, paymentAmount ?? 0, entry.service, entry.deal, totalPaid];
       break;
 
     default:

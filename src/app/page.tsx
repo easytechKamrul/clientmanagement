@@ -18,7 +18,6 @@ const serviceGroups = [
       'Insurance agent tasks',
       'Maternity and paternity pay support',
       'Sick and accident claims',
-      'CBT support',
     ],
   },
   {

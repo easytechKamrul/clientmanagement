@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import Image from 'next/image';
 import styles from './home.module.css';
 import {
@@ -118,11 +117,6 @@ export default function Home() {
             <a href="#services" className={styles.navLink}>Services</a>
             <a href="#about" className={styles.navLink}>About</a>
             <a href="#contact" className={styles.navLink}>Contact</a>
-
-            <Link href="/admin/login" className={styles.adminBtn}>
-              <span>Admin Portal</span>
-              <span className={styles.adminArrow}>↗</span>
-            </Link>
           </nav>
         </div>
       </header>
@@ -555,9 +549,7 @@ export default function Home() {
             <span className={styles.footerDot}>•</span>
             <a href="#about">About</a>
             <span className={styles.footerDot}>•</span>
-            <Link href="/admin/login" className={styles.footerAdminLink}>
-              Admin Login ↗
-            </Link>
+            <a href="#contact">Contact</a>
           </div>
         </div>
       </footer>

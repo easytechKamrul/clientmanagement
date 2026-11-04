@@ -1,5 +1,5 @@
 /* ========================================================
-   EASYTECH LONDON LTD - SENIOR FRONTEND DESIGN SYSTEM
+   EASYTECH LONDON LTD - FULLY RESPONSIVE DESIGN SYSTEM
    ======================================================== */
 
 :root {
@@ -29,6 +29,7 @@
   font-family: var(--font-sans);
   position: relative;
   overflow-x: hidden;
+  width: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -54,22 +55,22 @@
 .meshOrbThree {
   position: absolute;
   border-radius: 50%;
-  filter: blur(100px);
-  opacity: 0.25;
+  filter: blur(90px);
+  opacity: 0.22;
   animation: floatOrb 12s ease-in-out infinite alternate;
 }
 
 .meshOrbOne {
-  width: 550px;
-  height: 550px;
+  width: 500px;
+  height: 500px;
   background: radial-gradient(circle, #0284c7, transparent 70%);
   top: -100px;
   right: 5%;
 }
 
 .meshOrbTwo {
-  width: 450px;
-  height: 450px;
+  width: 400px;
+  height: 400px;
   background: radial-gradient(circle, #10b981, transparent 70%);
   top: 350px;
   left: -80px;
@@ -77,17 +78,17 @@
 }
 
 .meshOrbThree {
-  width: 400px;
-  height: 400px;
+  width: 350px;
+  height: 350px;
   background: radial-gradient(circle, #6366f1, transparent 70%);
   top: 700px;
-  right: 20%;
+  right: 15%;
   animation-delay: -8s;
 }
 
 @keyframes floatOrb {
   0% { transform: translateY(0) scale(1); }
-  100% { transform: translateY(40px) scale(1.08); }
+  100% { transform: translateY(35px) scale(1.06); }
 }
 
 /* ================= FLOATING GLASS HEADER ================= */
@@ -97,7 +98,7 @@
   left: 0;
   width: 100%;
   z-index: 100;
-  padding: 18px 4vw;
+  padding: 14px 4vw;
   transition: all 0.3s ease;
 }
 
@@ -107,32 +108,35 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 24px;
-  background: rgba(6, 11, 20, 0.65);
+  padding: 10px 20px;
+  background: rgba(6, 11, 20, 0.75);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 50px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  position: relative;
+  z-index: 101;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   text-decoration: none;
   color: #fff;
 }
 
 .logoBox {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
   background: #ffffff;
   display: grid;
   place-items: center;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+  flex-shrink: 0;
 }
 
 .brandText {
@@ -141,22 +145,25 @@
 }
 
 .brandText strong {
-  font-size: 14px;
-  letter-spacing: 1.5px;
+  font-size: 13.5px;
+  letter-spacing: 1.2px;
   font-weight: 800;
   background: linear-gradient(90deg, #fff, #38bdf8);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  line-height: 1.1;
 }
 
 .brandText span {
-  font-size: 8.5px;
-  letter-spacing: 2.2px;
+  font-size: 8px;
+  letter-spacing: 2px;
   color: #64748b;
   font-weight: 600;
+  margin-top: 2px;
 }
 
-.nav {
+/* Desktop Navbar */
+.desktopNav {
   display: flex;
   align-items: center;
   gap: 28px;
@@ -191,50 +198,152 @@
   width: 100%;
 }
 
-.adminBtn {
-  display: inline-flex;
+/* Hamburger Button for Mobile / Tablet */
+.menuToggleBtn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  gap: 6px;
-  padding: 8px 18px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 40px;
-  color: #fff;
-  font-size: 12.5px;
-  font-weight: 600;
-  text-decoration: none;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 0;
   transition: all 0.3s ease;
 }
 
-.adminBtn:hover {
-  background: #fff;
+.menuToggleBtn:hover {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.hamburgerLine {
+  width: 18px;
+  height: 2px;
+  background-color: #ffffff;
+  border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.menuOpen .hamburgerLine:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.menuOpen .hamburgerLine:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.menuOpen .hamburgerLine:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Mobile Slide-down Menu */
+.mobileMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 4vw;
+  right: 4vw;
+  background: rgba(10, 16, 28, 0.96);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 22px;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7);
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-15px) scale(0.98);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  z-index: 100;
+}
+
+.mobileMenuOpen {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.mobileNavLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mobileNavLink {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  color: #e2e8f0;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid transparent;
+  transition: all 0.25s ease;
+}
+
+.mobileNavLink:hover,
+.mobileNavLink:active {
+  background: rgba(56, 189, 248, 0.1);
+  border-color: rgba(56, 189, 248, 0.3);
+  color: #38bdf8;
+  transform: translateX(4px);
+}
+
+.mobileNavNum {
+  font-size: 11px;
+  font-weight: 800;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.mobileMenuDivider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 10px 0;
+}
+
+.mobileMenuWaBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 20px;
+  background: #10b981;
   color: #060b14;
-  border-color: #fff;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+  transition: all 0.25s ease;
 }
 
-.adminArrow {
-  font-size: 13px;
-  transition: transform 0.25s ease;
-}
-
-.adminBtn:hover .adminArrow {
-  transform: translate(2px, -2px);
+.mobileMenuWaBtn:active {
+  transform: scale(0.98);
 }
 
 /* ================= HERO SECTION ================= */
 .hero {
   position: relative;
   z-index: 1;
-  min-height: 840px;
   max-width: 1320px;
   margin: 0 auto;
-  padding: 160px 4vw 80px;
+  padding: 150px 4vw 80px;
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
   align-items: center;
-  gap: 60px;
+  gap: 50px;
 }
 
 .heroContent {
@@ -244,25 +353,26 @@
 .heroBadge {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 16px;
+  gap: 8px;
+  padding: 7px 14px;
   background: rgba(56, 189, 248, 0.08);
   border: 1px solid rgba(56, 189, 248, 0.25);
   border-radius: 30px;
   color: #7dd3fc;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
-  letter-spacing: 1.5px;
-  margin-bottom: 24px;
+  letter-spacing: 1.2px;
+  margin-bottom: 20px;
 }
 
 .livePulseDot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: #10b981;
-  box-shadow: 0 0 10px #10b981;
+  box-shadow: 0 0 8px #10b981;
   animation: pulseLight 1.8s infinite;
+  flex-shrink: 0;
 }
 
 @keyframes pulseLight {
@@ -271,11 +381,11 @@
 }
 
 .heroTitle {
-  font-size: clamp(44px, 5.5vw, 76px);
-  line-height: 1.02;
-  letter-spacing: -2.5px;
+  font-size: clamp(34px, 5vw, 68px);
+  line-height: 1.05;
+  letter-spacing: -2px;
   font-weight: 800;
-  margin: 0 0 22px;
+  margin: 0 0 20px;
 }
 
 .heroGradientText {
@@ -285,42 +395,42 @@
 }
 
 .heroDescription {
-  font-size: 16.5px;
+  font-size: 15.5px;
   line-height: 1.7;
   color: var(--text-secondary);
-  margin-bottom: 34px;
+  margin-bottom: 30px;
 }
 
 .heroButtons {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
 .primaryBtn {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  padding: 15px 26px;
+  gap: 10px;
+  padding: 14px 24px;
   background: #ffffff;
   color: #060b14;
   border-radius: 12px;
   text-decoration: none;
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 700;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
+  box-shadow: 0 6px 18px rgba(255, 255, 255, 0.15);
 }
 
 .primaryBtn:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   background: #f0f9ff;
-  box-shadow: 0 12px 28px rgba(56, 189, 248, 0.25);
+  box-shadow: 0 10px 24px rgba(56, 189, 248, 0.25);
 }
 
 .btnArrow {
-  font-size: 13px;
+  font-size: 12px;
   transition: transform 0.25s ease;
 }
 
@@ -332,13 +442,13 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 15px 24px;
+  padding: 14px 22px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 12px;
   color: #ffffff;
   text-decoration: none;
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 600;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
@@ -358,9 +468,9 @@
 .heroTrustCard {
   display: flex;
   align-items: center;
-  gap: 18px;
-  margin-top: 45px;
-  padding-top: 24px;
+  gap: 16px;
+  margin-top: 40px;
+  padding-top: 22px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -369,8 +479,8 @@
 }
 
 .avatarStack span {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   background: #1e293b;
   border: 2px solid var(--bg-dark);
@@ -392,9 +502,9 @@
 }
 
 .trustText .starRating {
-  font-size: 13px;
+  font-size: 12.5px;
   color: #fbbf24;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
 }
 
 .trustText .starRating strong {
@@ -405,31 +515,34 @@
 
 .trustText small {
   display: block;
-  font-size: 12px;
+  font-size: 11.5px;
   color: var(--text-muted);
-  margin-top: 3px;
+  margin-top: 2px;
 }
 
-/* ================= HERO VISUAL RADAR MOCKUP ================= */
+/* ================= HERO VISUAL ================= */
 .heroVisual {
   position: relative;
-  height: 480px;
+  height: 460px;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
   display: grid;
   place-items: center;
 }
 
 .visualBackdropGlow {
   position: absolute;
-  width: 340px;
-  height: 340px;
-  background: radial-gradient(circle, rgba(56, 189, 248, 0.25) 0%, transparent 70%);
-  filter: blur(50px);
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.22) 0%, transparent 70%);
+  filter: blur(45px);
 }
 
 .visualCircleOuter {
   position: relative;
-  width: 360px;
-  height: 360px;
+  width: 320px;
+  height: 320px;
   border-radius: 50%;
   border: 1px dashed rgba(255, 255, 255, 0.12);
   display: grid;
@@ -445,23 +558,23 @@
 }
 
 .radarRingOne {
-  width: 300px;
-  height: 300px;
+  width: 260px;
+  height: 260px;
 }
 
 .radarRingTwo {
-  width: 240px;
-  height: 240px;
+  width: 200px;
+  height: 200px;
   border-color: rgba(16, 185, 129, 0.15);
 }
 
 .visualCircle {
-  width: 220px;
-  height: 220px;
+  width: 190px;
+  height: 190px;
   border-radius: 50%;
   background: radial-gradient(circle at 35% 35%, #0e2746 0%, #060e1a 80%);
   border: 2px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 0 60px rgba(56, 189, 248, 0.2), inset 0 0 30px rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 50px rgba(56, 189, 248, 0.2), inset 0 0 25px rgba(255, 255, 255, 0.05);
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -472,25 +585,27 @@
   position: absolute;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 18px;
-  background: rgba(15, 23, 42, 0.85);
+  gap: 10px;
+  padding: 10px 14px;
+  background: rgba(15, 23, 42, 0.88);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 14px;
+  border-radius: 12px;
   backdrop-filter: blur(14px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
   animation: floatCard 5s ease-in-out infinite;
+  z-index: 2;
 }
 
 .cardIconBox {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   background: rgba(56, 189, 248, 0.18);
   color: #38bdf8;
   display: grid;
   place-items: center;
-  font-size: 16px;
+  font-size: 14px;
+  flex-shrink: 0;
 }
 
 .iconBoxGreen {
@@ -505,54 +620,57 @@
 
 .floatingGlassCard strong {
   display: block;
-  font-size: 12px;
+  font-size: 11px;
   color: #fff;
+  line-height: 1.2;
 }
 
 .floatingGlassCard span {
   display: block;
-  font-size: 10px;
+  font-size: 9px;
   color: #94a3b8;
   margin-top: 2px;
 }
 
 .cardTopLeft {
-  top: 40px;
+  top: 30px;
   left: 0;
   animation-delay: 0s;
 }
 
 .cardMidRight {
   top: 50%;
-  right: -20px;
+  right: 0;
   transform: translateY(-50%);
   animation-delay: -2s;
 }
 
 .cardBottomLeft {
-  bottom: 30px;
-  left: 30px;
+  bottom: 25px;
+  left: 15px;
   animation-delay: -3.5s;
 }
 
 @keyframes floatCard {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+  50% { transform: translateY(-7px); }
 }
 
 .heroStatusPill {
   position: absolute;
-  bottom: -20px;
-  right: 0;
+  bottom: -15px;
+  right: 50%;
+  transform: translateX(50%);
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
-  background: rgba(2, 6, 23, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  gap: 6px;
+  padding: 5px 12px;
+  background: rgba(2, 6, 23, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
-  font-size: 10.5px;
+  font-size: 10px;
   color: #94a3b8;
+  white-space: nowrap;
 }
 
 .statusPulse {
@@ -560,7 +678,7 @@
   height: 6px;
   border-radius: 50%;
   background: #10b981;
-  box-shadow: 0 0 8px #10b981;
+  box-shadow: 0 0 6px #10b981;
 }
 
 /* ================= STATS STRIP ================= */
@@ -575,7 +693,7 @@
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  background: rgba(15, 23, 42, 0.5);
+  background: rgba(15, 23, 42, 0.55);
   border: 1px solid var(--border-subtle);
   border-radius: 20px;
   backdrop-filter: blur(12px);
@@ -583,7 +701,7 @@
 }
 
 .statCard {
-  padding: 34px 28px;
+  padding: 30px 22px;
   border-right: 1px solid var(--border-subtle);
   transition: background 0.3s ease;
 }
@@ -598,7 +716,7 @@
 
 .statCard strong {
   display: block;
-  font-size: 36px;
+  font-size: 32px;
   font-weight: 800;
   letter-spacing: -1px;
   background: linear-gradient(90deg, #fff, #38bdf8);
@@ -608,17 +726,17 @@
 
 .statLabel {
   display: block;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
   color: #f1f5f9;
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 .statSub {
   display: block;
-  font-size: 11px;
+  font-size: 10.5px;
   color: var(--text-muted);
-  margin-top: 3px;
+  margin-top: 2px;
 }
 
 /* ================= SERVICES SECTION ================= */
@@ -627,15 +745,15 @@
   z-index: 1;
   max-width: 1320px;
   margin: 0 auto;
-  padding: 120px 4vw;
+  padding: 100px 4vw;
 }
 
 .sectionTop {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  gap: 50px;
-  margin-bottom: 60px;
+  gap: 40px;
+  margin-bottom: 50px;
 }
 
 .sectionEyebrow {
@@ -644,13 +762,13 @@
   letter-spacing: 2px;
   color: #38bdf8;
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .sectionHeading {
-  font-size: clamp(34px, 4vw, 54px);
+  font-size: clamp(30px, 3.8vw, 50px);
   font-weight: 800;
-  line-height: 1.05;
+  line-height: 1.08;
   letter-spacing: -1.5px;
   margin: 0;
 }
@@ -660,22 +778,22 @@
 }
 
 .sectionHeaderRight {
-  max-width: 440px;
+  max-width: 420px;
 }
 
 .sectionHeaderRight p {
-  font-size: 14.5px;
+  font-size: 14px;
   color: var(--text-secondary);
   line-height: 1.65;
-  margin: 0 0 16px;
+  margin: 0 0 14px;
 }
 
 .needHelpLink {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   color: #38bdf8;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 700;
   text-decoration: none;
   transition: color 0.25s ease;
@@ -685,37 +803,33 @@
   color: #7dd3fc;
 }
 
-/* Service Row Cards (Alternating Zig-Zag) */
 .serviceList {
   display: flex;
   flex-direction: column;
-  gap: 54px;
+  gap: 46px;
 }
 
 .serviceCardRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 50px;
-  padding: 44px;
+  gap: 46px;
+  padding: 40px;
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  border-radius: 28px;
+  border-radius: 26px;
   backdrop-filter: blur(16px);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-              border-color 0.4s ease,
-              box-shadow 0.4s ease;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+  transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
   position: relative;
 }
 
 .serviceCardRow:hover {
-  transform: translateY(-5px);
+  transform: translateY(-4px);
   border-color: var(--border-hover);
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 35px rgba(56, 189, 248, 0.12);
+  box-shadow: 0 25px 55px rgba(0, 0, 0, 0.6), 0 0 30px rgba(56, 189, 248, 0.12);
 }
 
-/* ২য় সার্ভিসে ভিডিও বামে ও বিবরণ ডানে */
 .serviceCardRowReversed {
   flex-direction: row-reverse;
 }
@@ -727,125 +841,125 @@
 .metaRow {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 10px;
+  margin-bottom: 14px;
 }
 
 .numberBadge {
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 800;
   color: #38bdf8;
   background: rgba(56, 189, 248, 0.12);
   border: 1px solid rgba(56, 189, 248, 0.3);
-  padding: 4px 12px;
-  border-radius: 8px;
+  padding: 3px 10px;
+  border-radius: 6px;
   letter-spacing: 1px;
 }
 
 .categoryPill {
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.2px;
   color: #94a3b8;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 5px 14px;
+  padding: 4px 12px;
   border-radius: 30px;
 }
 
 .serviceTitle {
-  font-size: clamp(22px, 2.2vw, 30px);
+  font-size: clamp(20px, 2vw, 28px);
   font-weight: 800;
   line-height: 1.25;
   letter-spacing: -0.5px;
-  margin: 0 0 14px;
+  margin: 0 0 12px;
   color: #ffffff;
 }
 
 .serviceDesc {
-  font-size: 14.5px;
+  font-size: 14px;
   color: #cbd5e1;
-  line-height: 1.7;
+  line-height: 1.65;
   margin: 0 0 10px;
 }
 
 .serviceSubtext {
-  font-size: 13.5px;
+  font-size: 13px;
   color: #94a3b8;
-  line-height: 1.6;
+  line-height: 1.55;
   font-style: italic;
-  margin: 0 0 18px;
+  margin: 0 0 16px;
 }
 
 .dividerLine {
   height: 1px;
   width: 100%;
   background: linear-gradient(90deg, rgba(255, 255, 255, 0.12), transparent);
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
 .bulletListHeading {
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.2px;
   color: #38bdf8;
-  margin: 0 0 14px;
+  margin: 0 0 12px;
 }
 
 .featureList {
   list-style: none;
   padding: 0;
-  margin: 0 0 20px;
+  margin: 0 0 18px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 9px;
 }
 
 .featureList li {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  font-size: 13.5px;
+  gap: 10px;
+  font-size: 13px;
   color: #e2e8f0;
   line-height: 1.5;
 }
 
 .checkCircle {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: rgba(16, 185, 129, 0.15);
   border: 1px solid rgba(16, 185, 129, 0.4);
   color: #10b981;
   display: grid;
   place-items: center;
-  font-size: 9px;
+  font-size: 8px;
   flex-shrink: 0;
-  margin-top: 1px;
+  margin-top: 2px;
 }
 
 .calloutBox {
-  padding: 12px 18px;
+  padding: 10px 16px;
   background: rgba(16, 185, 129, 0.06);
   border-left: 3px solid #10b981;
-  border-radius: 0 10px 10px 0;
-  margin-bottom: 24px;
+  border-radius: 0 8px 8px 0;
+  margin-bottom: 20px;
 }
 
 .calloutBox p {
   margin: 0;
-  font-size: 13px;
+  font-size: 12.5px;
   color: #a7f3d0;
-  line-height: 1.55;
+  line-height: 1.5;
   font-weight: 500;
 }
 
 .serviceButtonRow {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
@@ -853,38 +967,38 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 22px;
+  padding: 11px 20px;
   background: #10b981;
   color: #060b14;
   border-radius: 10px;
   text-decoration: none;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 700;
   transition: all 0.3s ease;
-  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
 }
 
 .whatsappActionBtn:hover {
   background: #059669;
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.45);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.45);
 }
 
 .waIcon {
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .enquireActionBtn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 20px;
+  padding: 11px 18px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 10px;
   color: #ffffff;
   text-decoration: none;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 600;
   transition: all 0.3s ease;
 }
@@ -896,33 +1010,33 @@
 }
 
 .enquireArrow {
-  font-size: 12px;
+  font-size: 11px;
   transition: transform 0.25s ease;
 }
 
 .enquireActionBtn:hover .enquireArrow {
-  transform: translateX(4px);
+  transform: translateX(3px);
 }
 
-/* ================= VIDEO PLAYER FRAME & ANIMATIONS ================= */
+/* ================= VIDEO PLAYER FRAME ================= */
 .serviceVideo {
   flex: 1;
   position: relative;
-  min-width: 340px;
+  min-width: 320px;
+  width: 100%;
 }
 
-/* নিয়ন পালসিং অ্যাম্বিয়েন্ট ব্যাকলাইট */
 .videoAmbientGlow {
   position: absolute;
-  inset: -14px;
+  inset: -12px;
   background: radial-gradient(
     circle at center,
-    rgba(56, 189, 248, 0.24) 0%,
-    rgba(16, 185, 129, 0.16) 45%,
+    rgba(56, 189, 248, 0.22) 0%,
+    rgba(16, 185, 129, 0.14) 45%,
     transparent 72%
   );
-  filter: blur(28px);
-  border-radius: 28px;
+  filter: blur(25px);
+  border-radius: 24px;
   z-index: 0;
   pointer-events: none;
   animation: pulseGlowSenior 6s ease-in-out infinite alternate;
@@ -930,7 +1044,7 @@
 
 @keyframes pulseGlowSenior {
   0% { opacity: 0.45; transform: scale(0.96); }
-  100% { opacity: 0.9; transform: scale(1.03); }
+  100% { opacity: 0.85; transform: scale(1.03); }
 }
 
 .videoPlayerApp {
@@ -938,34 +1052,34 @@
   z-index: 1;
   background: #090e18;
   border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 18px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65);
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
 }
 
 .serviceCardRow:hover .videoPlayerApp {
-  transform: translateY(-5px);
-  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(56, 189, 248, 0.2);
+  transform: translateY(-4px);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.75), 0 0 25px rgba(56, 189, 248, 0.2);
 }
 
 .videoWindowChrome {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 16px;
+  padding: 8px 14px;
   background: rgba(255, 255, 255, 0.04);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .trafficDots {
   display: flex;
-  gap: 6px;
+  gap: 5px;
 }
 
 .trafficDots span {
-  width: 9px;
-  height: 9px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   display: inline-block;
 }
@@ -975,22 +1089,22 @@
 .dotGreen { background: #27c93f; }
 
 .videoLiveBadge {
-  font-size: 10px;
-  letter-spacing: 1.5px;
+  font-size: 9.5px;
+  letter-spacing: 1.2px;
   text-transform: uppercase;
   color: #94a3b8;
   font-weight: 700;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
 }
 
 .liveRedDot {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   background: #ef4444;
   border-radius: 50%;
-  box-shadow: 0 0 8px #ef4444;
+  box-shadow: 0 0 6px #ef4444;
   animation: liveDotPulse 1.8s infinite;
 }
 
@@ -1002,7 +1116,7 @@
 .videoAspectContainer {
   position: relative;
   width: 100%;
-  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  padding-top: 56.25%;
   background: #000;
 }
 
@@ -1021,28 +1135,28 @@
   z-index: 1;
   max-width: 1320px;
   margin: 0 auto;
-  padding: 120px 4vw;
+  padding: 100px 4vw;
   display: grid;
   grid-template-columns: 0.9fr 1.1fr;
   align-items: center;
-  gap: 80px;
+  gap: 60px;
 }
 
 .aboutVisual {
   position: relative;
   display: grid;
   place-items: center;
-  min-height: 440px;
+  min-height: 400px;
 }
 
 .aboutGeometricCard {
-  width: 330px;
-  height: 400px;
-  padding: 32px;
+  width: 310px;
+  height: 380px;
+  padding: 28px;
   background: linear-gradient(145deg, #0d1b2a, #060b14);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 20px;
-  box-shadow: 30px 30px 70px rgba(0, 0, 0, 0.5);
+  border-radius: 18px;
+  box-shadow: 25px 25px 60px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1061,52 +1175,52 @@
 }
 
 .aboutBrandTag {
-  font-size: 10px;
-  letter-spacing: 2px;
+  font-size: 9.5px;
+  letter-spacing: 1.8px;
   color: #38bdf8;
   font-weight: 700;
 }
 
 .aboutFlagPill {
-  font-size: 11px;
+  font-size: 10.5px;
   background: rgba(255, 255, 255, 0.08);
-  padding: 3px 10px;
+  padding: 3px 9px;
   border-radius: 20px;
 }
 
 .aboutHeroWordmark {
-  font-size: 64px;
+  font-size: 58px;
   line-height: 0.88;
-  letter-spacing: -4px;
+  letter-spacing: -3.5px;
   font-weight: 900;
   color: #ffffff;
 }
 
 .aboutGeometricBottom span {
   display: block;
-  font-size: 10px;
-  letter-spacing: 1.5px;
+  font-size: 9.5px;
+  letter-spacing: 1.2px;
   color: #cbd5e1;
   font-weight: 700;
 }
 
 .aboutGeometricBottom small {
   display: block;
-  font-size: 9px;
+  font-size: 8.5px;
   color: #64748b;
-  margin-top: 4px;
+  margin-top: 3px;
 }
 
 .aboutFloatingBadge {
   position: absolute;
   right: 15px;
   bottom: 20px;
-  width: 130px;
-  height: 130px;
+  width: 115px;
+  height: 115px;
   background: #0284c7;
   border-radius: 50%;
-  border: 6px solid var(--bg-dark);
-  box-shadow: 0 15px 35px rgba(2, 132, 199, 0.4);
+  border: 5px solid var(--bg-dark);
+  box-shadow: 0 12px 30px rgba(2, 132, 199, 0.4);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1115,14 +1229,14 @@
 }
 
 .aboutFloatingBadge strong {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 900;
 }
 
 .aboutFloatingBadge span {
-  font-size: 7.5px;
-  letter-spacing: 1.5px;
-  margin-top: 4px;
+  font-size: 7px;
+  letter-spacing: 1.2px;
+  margin-top: 3px;
 }
 
 .aboutContent {
@@ -1130,11 +1244,11 @@
 }
 
 .aboutTitle {
-  font-size: clamp(34px, 4vw, 52px);
+  font-size: clamp(30px, 3.8vw, 48px);
   font-weight: 800;
-  line-height: 1.05;
+  line-height: 1.08;
   letter-spacing: -1.5px;
-  margin: 14px 0 24px;
+  margin: 12px 0 20px;
 }
 
 .aboutTitle span {
@@ -1142,38 +1256,38 @@
 }
 
 .aboutLead {
-  font-size: 16px;
+  font-size: 15px;
   color: #e2e8f0;
   line-height: 1.7;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .aboutBody {
-  font-size: 14.5px;
+  font-size: 14px;
   color: var(--text-secondary);
   line-height: 1.7;
-  margin-bottom: 30px;
+  margin-bottom: 26px;
 }
 
 .ownerCard {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 18px 24px;
+  gap: 14px;
+  padding: 16px 20px;
   background: rgba(15, 23, 42, 0.6);
   border: 1px solid var(--border-subtle);
-  border-radius: 16px;
+  border-radius: 14px;
   backdrop-filter: blur(10px);
 }
 
 .ownerAvatar {
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: linear-gradient(135deg, #0284c7, #1e293b);
   border: 2px solid #38bdf8;
   color: #fff;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
   display: grid;
   place-items: center;
@@ -1186,24 +1300,24 @@
 
 .ownerTitle {
   display: block;
-  font-size: 9px;
-  letter-spacing: 1.5px;
+  font-size: 8.5px;
+  letter-spacing: 1.2px;
   color: #94a3b8;
   font-weight: 700;
 }
 
 .ownerName {
   display: block;
-  font-size: 15px;
+  font-size: 14px;
   color: #ffffff;
   margin-top: 2px;
 }
 
 .verifiedBadge span {
-  font-size: 11px;
+  font-size: 10.5px;
   color: #10b981;
   background: rgba(16, 185, 129, 0.1);
-  padding: 4px 10px;
+  padding: 4px 8px;
   border-radius: 20px;
   font-weight: 600;
 }
@@ -1213,25 +1327,25 @@
   position: relative;
   z-index: 1;
   max-width: 1320px;
-  margin: 40px auto 100px;
-  padding: 64px;
+  margin: 30px auto 90px;
+  padding: 56px 44px;
   background: linear-gradient(135deg, #0b1526, #060e1a);
   border: 1px solid rgba(56, 189, 248, 0.2);
-  border-radius: 28px;
+  border-radius: 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 40px;
+  gap: 36px;
   overflow: hidden;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
 }
 
 .ctaGlowOrb {
   position: absolute;
   top: -150px;
   right: -100px;
-  width: 400px;
-  height: 400px;
+  width: 350px;
+  height: 350px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, transparent 70%);
   filter: blur(50px);
@@ -1241,24 +1355,24 @@
 .ctaTextGroup {
   position: relative;
   z-index: 1;
-  max-width: 620px;
+  max-width: 600px;
 }
 
 .ctaEyebrow {
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 800;
   letter-spacing: 2px;
   color: #38bdf8;
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .ctaTitle {
-  font-size: clamp(30px, 3.8vw, 48px);
-  line-height: 1.05;
-  letter-spacing: -1.5px;
+  font-size: clamp(26px, 3.4vw, 44px);
+  line-height: 1.08;
+  letter-spacing: -1.2px;
   font-weight: 800;
-  margin: 0 0 14px;
+  margin: 0 0 12px;
 }
 
 .ctaTitle em {
@@ -1267,7 +1381,7 @@
 }
 
 .ctaSubtext {
-  font-size: 14.5px;
+  font-size: 14px;
   color: #cbd5e1;
   margin: 0;
 }
@@ -1286,21 +1400,20 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 16px 28px;
+  padding: 14px 26px;
   background: #10b981;
   color: #060b14;
   border-radius: 12px;
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 700;
   text-decoration: none;
   transition: all 0.3s ease;
-  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.3);
 }
 
 .ctaWhatsappBtn:hover {
   background: #059669;
   transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(16, 185, 129, 0.45);
 }
 
 .ctaContactBtn {
@@ -1308,12 +1421,12 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 15px 26px;
+  padding: 14px 24px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 12px;
   color: #ffffff;
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 600;
   text-decoration: none;
   transition: all 0.3s ease;
@@ -1321,8 +1434,6 @@
 
 .ctaContactBtn:hover {
   background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
 }
 
 /* ================= FOOTER ================= */
@@ -1331,7 +1442,7 @@
   z-index: 1;
   background: #040810;
   border-top: 1px solid var(--border-subtle);
-  padding: 80px 4vw 30px;
+  padding: 70px 4vw 25px;
 }
 
 .footerMain {
@@ -1339,49 +1450,49 @@
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1.5fr 1fr 1fr;
-  gap: 60px;
-  padding-bottom: 60px;
+  gap: 50px;
+  padding-bottom: 50px;
 }
 
 .footerLogo {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   text-decoration: none;
   color: #fff;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
 .footerLogo strong {
   display: block;
-  font-size: 16px;
-  letter-spacing: 1.5px;
+  font-size: 15px;
+  letter-spacing: 1.2px;
 }
 
 .footerLogo span {
   display: block;
-  font-size: 9px;
-  letter-spacing: 2.2px;
+  font-size: 8.5px;
+  letter-spacing: 2px;
   color: #64748b;
 }
 
 .footerIntro p {
-  font-size: 13.5px;
+  font-size: 13px;
   color: var(--text-secondary);
-  line-height: 1.7;
+  line-height: 1.65;
   max-width: 320px;
-  margin: 0 0 20px;
+  margin: 0 0 18px;
 }
 
 .footerLocationBadge {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 14px;
+  padding: 5px 12px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
-  font-size: 11.5px;
+  font-size: 11px;
   color: #94a3b8;
 }
 
@@ -1396,22 +1507,22 @@
   display: block;
   font-size: 10px;
   font-weight: 800;
-  letter-spacing: 2px;
+  letter-spacing: 1.8px;
   color: #38bdf8;
-  margin-bottom: 22px;
+  margin-bottom: 20px;
 }
 
 .footerContact {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
 
 .contactItem {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 12px 16px;
+  gap: 12px;
+  padding: 10px 14px;
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--border-subtle);
   border-radius: 12px;
@@ -1427,16 +1538,17 @@
 }
 
 .contactIconCircle {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.05);
   display: grid;
   place-items: center;
+  flex-shrink: 0;
 }
 
-.emailIcon { color: #38bdf8; font-size: 15px; }
-.whatsappIcon { color: #10b981; font-size: 17px; }
+.emailIcon { color: #38bdf8; font-size: 14px; }
+.whatsappIcon { color: #10b981; font-size: 16px; }
 
 .contactText {
   flex: 1;
@@ -1444,44 +1556,40 @@
 
 .contactText small {
   display: block;
-  font-size: 10px;
+  font-size: 9.5px;
   color: var(--text-muted);
 }
 
 .contactText span {
   display: block;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 600;
   color: #e2e8f0;
+  word-break: break-all;
 }
 
 .contactArrow {
   color: #64748b;
-  font-size: 13px;
-  transition: color 0.25s ease;
-}
-
-.contactItem:hover .contactArrow {
-  color: #38bdf8;
+  font-size: 12px;
 }
 
 .socialButtonsGroup {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .socialPill {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 18px;
+  padding: 10px 16px;
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--border-subtle);
   border-radius: 12px;
   text-decoration: none;
   color: #cbd5e1;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
   transition: all 0.3s ease;
 }
@@ -1498,25 +1606,25 @@
   color: #64748b;
 }
 
-.instagramIcon { color: #e1306c; font-size: 16px; }
-.facebookIcon { color: #1877f2; font-size: 16px; }
+.instagramIcon { color: #e1306c; font-size: 15px; }
+.facebookIcon { color: #1877f2; font-size: 15px; }
 
 .footerBottom {
   max-width: 1320px;
   margin: 0 auto;
-  padding-top: 24px;
+  padding-top: 22px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: 11.5px;
   color: #64748b;
 }
 
 .footerBottomLinks {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
 }
 
 .footerBottomLinks a {
@@ -1533,44 +1641,37 @@
   color: #334155;
 }
 
-.footerAdminLink {
-  color: #38bdf8 !important;
-  font-weight: 600;
-}
-
 /* ================= FLOATING WHATSAPP BUTTON ================= */
 .floatingWhatsApp {
   position: fixed;
-  right: 28px;
-  bottom: 28px;
-  z-index: 99;
-  width: 60px;
-  height: 60px;
+  right: 22px;
+  bottom: 22px;
+  z-index: 95;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
   background: #10b981;
   color: #ffffff;
   display: grid;
   place-items: center;
   text-decoration: none;
-  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease;
+  box-shadow: 0 8px 22px rgba(16, 185, 129, 0.4);
+  transition: transform 0.3s ease;
 }
 
 .floatingWhatsApp:hover {
-  transform: scale(1.08) translateY(-3px);
-  background: #059669;
-  box-shadow: 0 15px 35px rgba(16, 185, 129, 0.55);
+  transform: scale(1.08);
 }
 
 .waFloatingIcon {
-  font-size: 32px;
+  font-size: 28px;
   position: relative;
   z-index: 2;
 }
 
 .waPulseWave {
   position: absolute;
-  inset: -6px;
+  inset: -5px;
   border-radius: 50%;
   border: 2px solid rgba(16, 185, 129, 0.6);
   animation: waRipple 2.2s infinite;
@@ -1579,27 +1680,185 @@
 
 @keyframes waRipple {
   0% { transform: scale(0.9); opacity: 1; }
-  100% { transform: scale(1.4); opacity: 0; }
+  100% { transform: scale(1.35); opacity: 0; }
 }
 
-/* ================= RESPONSIVE DESIGN (SENIOR ADAPTATION) ================= */
-@media (max-width: 1080px) {
+/* ========================================================
+   TABLET & IPAD MINI BREAKPOINT (max-width: 992px)
+   ডেস্কটপের মতো সুন্দর ২-কলাম ও লেফট-অ্যালাইনড লুক
+   ======================================================== */
+@media (max-width: 992px) {
+  /* Show hamburger button & hide desktop nav */
+  .desktopNav {
+    display: none;
+  }
+
+  .menuToggleBtn {
+    display: flex;
+  }
+
+  /* ১. HERO SECTION: ডেস্কটপের মতো বাম-ঘেঁষা ২-কলাম লেআউট */
   .hero {
-    grid-template-columns: 1fr;
-    padding-top: 140px;
-    gap: 40px;
+    grid-template-columns: 1.1fr 0.9fr;
+    padding-top: 110px;
+    padding-bottom: 50px;
+    gap: 30px;
+    text-align: left;
+    align-items: center;
+  }
+
+  .heroContent {
+    max-width: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .heroTitle {
+    font-size: clamp(32px, 4.2vw, 46px);
+    letter-spacing: -1.5px;
+    margin-bottom: 16px;
+  }
+
+  .heroDescription {
+    font-size: 14.5px;
+    margin-bottom: 24px;
+    text-align: left;
+  }
+
+  .heroButtons {
+    justify-content: flex-start;
+  }
+
+  .heroTrustCard {
+    justify-content: flex-start;
+    margin-top: 32px;
   }
 
   .heroVisual {
-    max-width: 500px;
+    max-width: 320px;
+    height: 380px;
     margin: 0 auto;
+  }
+
+  .visualCircleOuter {
+    width: 270px;
+    height: 270px;
+  }
+
+  .radarRingOne {
+    width: 225px;
+    height: 225px;
+  }
+
+  .radarRingTwo {
+    width: 180px;
+    height: 180px;
+  }
+
+  .visualCircle {
+    width: 160px;
+    height: 160px;
+  }
+
+  .visualCircle img {
+    width: 120px !important;
+    height: 120px !important;
+  }
+
+  .cardTopLeft {
+    top: 20px;
+    left: -10px;
+  }
+
+  .cardMidRight {
+    right: -10px;
+    top: 50%;
+  }
+
+  .cardBottomLeft {
+    bottom: 20px;
+    left: 5px;
+  }
+
+  /* ২. ABOUT SECTION: ডেস্কটপের মতো পাশাপাশি ২-কলাম ও লেফট-অ্যালাইনড */
+  .about {
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: 36px;
+    text-align: left;
+    align-items: center;
+    padding: 80px 4vw;
+  }
+
+  .aboutVisual {
+    min-height: 350px;
+    display: grid;
+    place-items: center;
+  }
+
+  .aboutGeometricCard {
+    width: 260px;
+    height: 330px;
+    padding: 22px;
+    transform: rotate(-2deg);
+  }
+
+  .aboutHeroWordmark {
+    font-size: 48px;
+    line-height: 0.9;
+    letter-spacing: -3px;
+  }
+
+  .aboutFloatingBadge {
+    width: 95px;
+    height: 95px;
+    right: -5px;
+    bottom: 5px;
+  }
+
+  .aboutFloatingBadge strong {
+    font-size: 20px;
+  }
+
+  .aboutContent {
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .aboutTitle {
+    font-size: clamp(28px, 3.5vw, 40px);
+    margin: 10px 0 16px;
+    text-align: left;
+  }
+
+  .aboutLead {
+    font-size: 14.5px;
+    margin-bottom: 12px;
+    text-align: left;
+  }
+
+  .aboutBody {
+    font-size: 13.5px;
+    margin-bottom: 22px;
+    text-align: left;
+  }
+
+  .ownerCard {
+    text-align: left;
+    width: 100%;
+    max-width: 100%;
   }
 
   .serviceCardRow,
   .serviceCardRowReversed {
     flex-direction: column !important;
-    gap: 32px;
-    padding: 32px 24px;
+    gap: 28px;
+    padding: 30px 22px;
   }
 
   .serviceDetails,
@@ -1608,83 +1867,281 @@
     min-width: unset;
   }
 
-  .about {
-    grid-template-columns: 1fr;
-    gap: 60px;
-  }
-
-  .aboutVisual {
-    min-height: 380px;
-  }
-
   .footerMain {
     grid-template-columns: 1fr 1fr;
+    gap: 40px;
   }
 }
 
-@media (max-width: 768px) {
-  .headerContainer {
-    padding: 10px 18px;
+/* ========================================================
+   MOBILE PHONES & SMALL SCREENS (max-width: 640px)
+   ======================================================== */
+@media (max-width: 640px) {
+  .header {
+    padding: 10px 12px;
   }
 
-  .navLink {
-    display: none;
+  .headerContainer {
+    padding: 8px 14px;
+    border-radius: 40px;
+  }
+
+  .mobileMenu {
+    left: 12px;
+    right: 12px;
+    padding: 16px;
+  }
+
+  .hero {
+    grid-template-columns: 1fr;
+    padding-top: 105px;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-bottom: 40px;
+    gap: 32px;
   }
 
   .heroTitle {
-    font-size: 42px;
-    letter-spacing: -1.5px;
+    font-size: 36px;
+    letter-spacing: -1.2px;
+  }
+
+  .heroDescription {
+    font-size: 14px;
+    margin-bottom: 24px;
   }
 
   .heroButtons {
     flex-direction: column;
-    align-items: stretch;
+    width: 100%;
   }
 
   .primaryBtn,
   .secondaryBtn {
+    width: 100%;
     justify-content: center;
+    padding: 13px 18px;
+  }
+
+  .heroVisual {
+    height: 360px;
+    max-width: 320px;
+    margin: 10px auto 0;
+  }
+
+  .visualCircleOuter {
+    width: 250px;
+    height: 250px;
+  }
+
+  .radarRingOne {
+    width: 210px;
+    height: 210px;
+  }
+
+  .radarRingTwo {
+    width: 170px;
+    height: 170px;
+  }
+
+  .visualCircle {
+    width: 150px;
+    height: 150px;
+  }
+
+  .visualCircle img {
+    width: 110px !important;
+    height: 110px !important;
+  }
+
+  .floatingGlassCard {
+    padding: 7px 11px;
+    border-radius: 10px;
+  }
+
+  .cardIconBox {
+    width: 26px;
+    height: 26px;
+    font-size: 12px;
+  }
+
+  .floatingGlassCard strong {
+    font-size: 10px;
+  }
+
+  .floatingGlassCard span {
+    font-size: 8px;
+  }
+
+  .cardTopLeft {
+    top: 15px;
+    left: -6px;
+  }
+
+  .cardMidRight {
+    right: -6px;
+    top: 50%;
+  }
+
+  .cardBottomLeft {
+    bottom: 15px;
+    left: 0;
+  }
+
+  .heroStatusPill {
+    bottom: -22px;
+    font-size: 9px;
+  }
+
+  .stats {
+    padding: 0 16px;
   }
 
   .statsGrid {
     grid-template-columns: 1fr 1fr;
+    border-radius: 16px;
   }
 
   .statCard {
-    padding: 24px 18px;
+    padding: 20px 14px;
+  }
+
+  .statCard:nth-child(2) {
+    border-right: none;
+  }
+
+  .statCard:nth-child(3),
+  .statCard:nth-child(4) {
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .statCard strong {
+    font-size: 26px;
+  }
+
+  .statLabel {
+    font-size: 11px;
+  }
+
+  .statSub {
+    font-size: 9px;
+  }
+
+  .services {
+    padding: 70px 16px;
   }
 
   .sectionTop {
     flex-direction: column;
     align-items: flex-start;
-    gap: 20px;
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+
+  .sectionHeading {
+    font-size: 30px;
+  }
+
+  .serviceCardRow {
+    padding: 22px 16px;
+    border-radius: 20px;
+    gap: 24px;
+  }
+
+  .serviceTitle {
+    font-size: 20px;
+  }
+
+  .serviceButtonRow {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .whatsappActionBtn,
+  .enquireActionBtn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .about {
+    grid-template-columns: 1fr;
+    padding: 70px 16px;
+    gap: 40px;
+  }
+
+  .aboutGeometricCard {
+    width: 100%;
+    max-width: 290px;
+    height: 330px;
+    padding: 22px;
+    transform: none;
+  }
+
+  .aboutHeroWordmark {
+    font-size: 50px;
+  }
+
+  .aboutFloatingBadge {
+    right: 5px;
+    bottom: -15px;
+    width: 95px;
+    height: 95px;
+  }
+
+  .aboutFloatingBadge strong {
+    font-size: 20px;
+  }
+
+  .aboutTitle {
+    font-size: 30px;
   }
 
   .cta {
-    padding: 36px 24px;
+    margin: 20px 16px 60px;
+    padding: 34px 20px;
     flex-direction: column;
     text-align: left;
     align-items: stretch;
+    border-radius: 20px;
+  }
+
+  .ctaTitle {
+    font-size: 26px;
   }
 
   .ctaButtonGroup {
     width: 100%;
   }
 
+  .ctaWhatsappBtn,
+  .ctaContactBtn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .footer {
+    padding: 50px 16px 20px;
+  }
+
   .footerMain {
     grid-template-columns: 1fr;
-    gap: 40px;
+    gap: 36px;
   }
 
   .footerBottom {
     flex-direction: column;
     align-items: flex-start;
-    gap: 14px;
+    gap: 12px;
   }
 
-  .cardTopLeft,
-  .cardMidRight,
-  .cardBottomLeft {
-    transform: scale(0.85);
+  .floatingWhatsApp {
+    right: 16px;
+    bottom: 16px;
+    width: 50px;
+    height: 50px;
+  }
+
+  .waFloatingIcon {
+    font-size: 25px;
   }
 }

@@ -1,3 +1,6 @@
+'use client';
+
+import React, { useState } from 'react';
 import Image from 'next/image';
 import styles from './home.module.css';
 import {
@@ -32,7 +35,7 @@ const serviceGroups = [
     videoId: 'j1EiQMi7cbQ',
     videoTitle: 'UK Delivery Drivers Account & App Support Guide',
     whatsappMsg: 'Hello EasyTech London, I need urgent help with UK Delivery Driver Account & App Support.',
-    isReversed: false, // 1st: Left Details, Right Video
+    isReversed: false,
   },
   {
     number: '02',
@@ -51,7 +54,7 @@ const serviceGroups = [
     videoId: '3DKKXYD9TjQ',
     videoTitle: 'Delivery & Taxi Driver Sick Pay & Claims Guide',
     whatsappMsg: 'Hello EasyTech London, I need advice on Driver Sick Pay, Injury Claims, or Maternity/Paternity Support.',
-    isReversed: true, // 2nd: Left Video, Right Details
+    isReversed: true,
   },
   {
     number: '03',
@@ -71,7 +74,7 @@ const serviceGroups = [
     videoId: 'LBVnVwm1U_c',
     videoTitle: 'Easy Buy & Rent - UK Vehicle Rental & Insurance Guide',
     whatsappMsg: 'Hello EasyTech London, I want to inquire about Easy Buy & Rent Insurance and Vehicle Rental.',
-    isReversed: false, // 3rd: Left Details, Right Video
+    isReversed: false,
   },
 ];
 
@@ -83,6 +86,16 @@ const stats = [
 ];
 
 export default function Home() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen((prev) => !prev);
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
+
   return (
     <main className={styles.site}>
       {/* BACKGROUND AMBIENT MESH */}
@@ -95,13 +108,13 @@ export default function Home() {
       {/* FLOATING GLASS HEADER */}
       <header className={styles.header}>
         <div className={styles.headerContainer}>
-          <a href="#home" className={styles.brand}>
+          <a href="#home" className={styles.brand} onClick={closeMenu}>
             <div className={styles.logoBox}>
               <Image
                 src="/Easy Tech solution logo.png"
                 alt="EASYTECH LONDON LTD"
-                width={46}
-                height={46}
+                width={42}
+                height={42}
                 priority
               />
             </div>
@@ -112,11 +125,60 @@ export default function Home() {
             </div>
           </a>
 
-          <nav className={styles.nav}>
+          {/* DESKTOP NAVIGATION (ল্যাপটপ / পিসিতে দেখাবে) */}
+          <nav className={styles.desktopNav}>
             <a href="#home" className={styles.navLink}>Home</a>
             <a href="#services" className={styles.navLink}>Services</a>
             <a href="#about" className={styles.navLink}>About</a>
             <a href="#contact" className={styles.navLink}>Contact</a>
+          </nav>
+
+          {/* MOBILE HAMBURGER BUTTON (ফোন ও ট্যাবলেটে দেখাবে) */}
+          <button
+            type="button"
+            className={`${styles.menuToggleBtn} ${isMenuOpen ? styles.menuOpen : ''}`}
+            onClick={toggleMenu}
+            aria-label="Toggle navigation menu"
+            aria-expanded={isMenuOpen}
+          >
+            <span className={styles.hamburgerLine} />
+            <span className={styles.hamburgerLine} />
+            <span className={styles.hamburgerLine} />
+          </button>
+        </div>
+
+        {/* MOBILE SLIDE-DOWN DRAWER MENU */}
+        <div className={`${styles.mobileMenu} ${isMenuOpen ? styles.mobileMenuOpen : ''}`}>
+          <nav className={styles.mobileNavLinks}>
+            <a href="#home" className={styles.mobileNavLink} onClick={closeMenu}>
+              <span className={styles.mobileNavNum}>01</span>
+              <span>Home</span>
+            </a>
+            <a href="#services" className={styles.mobileNavLink} onClick={closeMenu}>
+              <span className={styles.mobileNavNum}>02</span>
+              <span>Services</span>
+            </a>
+            <a href="#about" className={styles.mobileNavLink} onClick={closeMenu}>
+              <span className={styles.mobileNavNum}>03</span>
+              <span>About</span>
+            </a>
+            <a href="#contact" className={styles.mobileNavLink} onClick={closeMenu}>
+              <span className={styles.mobileNavNum}>04</span>
+              <span>Contact</span>
+            </a>
+
+            <div className={styles.mobileMenuDivider} />
+
+            <a
+              href="https://wa.me/447514585898"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.mobileMenuWaBtn}
+              onClick={closeMenu}
+            >
+              <FaWhatsapp />
+              <span>WhatsApp Live Support</span>
+            </a>
           </nav>
         </div>
       </header>
@@ -169,10 +231,10 @@ export default function Home() {
           </div>
         </div>
 
-        {/* HERO VISUAL MOCKUP */}
+        {/* HERO VISUAL MOCKUP (RESPONSIVE SAFE-SCALING) */}
         <div className={styles.heroVisual}>
           <div className={styles.visualBackdropGlow} />
-          
+
           <div className={styles.visualCircleOuter}>
             <div className={styles.radarRingOne} />
             <div className={styles.radarRingTwo} />
@@ -181,8 +243,8 @@ export default function Home() {
               <Image
                 src="/Easy Tech solution logo.png"
                 alt="EASYTECH LONDON LTD"
-                width={170}
-                height={170}
+                width={150}
+                height={150}
                 priority
               />
             </div>
@@ -233,7 +295,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SERVICES WITH VIDEO (ALTERNATING SENIOR UI) */}
+      {/* SERVICES WITH VIDEO */}
       <section className={styles.services} id="services">
         <div className={styles.sectionTop}>
           <div className={styles.sectionHeaderLeft}>
@@ -281,7 +343,7 @@ export default function Home() {
                 <h3 className={styles.serviceTitle}>{group.title}</h3>
 
                 <p className={styles.serviceDesc}>{group.description}</p>
-                
+
                 {group.subtext && (
                   <p className={styles.serviceSubtext}>{group.subtext}</p>
                 )}
@@ -324,7 +386,7 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* VIDEO SIDE WITH MULTI-LAYERED GLOW & APPARATUS */}
+              {/* VIDEO SIDE */}
               <div className={styles.serviceVideo}>
                 <div className={styles.videoAmbientGlow} />
 
@@ -461,8 +523,8 @@ export default function Home() {
               <Image
                 src="/Easy Tech solution logo.png"
                 alt="EASYTECH LONDON LTD"
-                width={58}
-                height={58}
+                width={54}
+                height={54}
               />
 
               <div>
